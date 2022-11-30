@@ -9,7 +9,7 @@ import seaborn as sns
 import IPython.display as ipd
 import pygame
 pygame.init()
-audio_data = 'file.wav'
+audio_data = 'file2.wav'
 pygame.mixer.music.load(audio_data)
 tr = 0
 bits_in_minute = 60.0
