@@ -1,21 +1,13 @@
 import time
-
-import librosa
-import matplotlib
 import librosa.display
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import IPython.display as ipd
 import pygame
 pygame.init()
 audio_data = 'file2.wav'
 pygame.mixer.music.load(audio_data)
-tr = 0
+tr, tic, toc = 0, 0, 0
 bits_in_minute = 60.0
 er = 1
-tic = 0
-toc = 0
 y, sr = librosa.load(audio_data)
 print(type(y), type(sr))
 y_harmonic, y_percussive = librosa.effects.hpss(y)
