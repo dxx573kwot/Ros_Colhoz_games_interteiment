@@ -14,6 +14,8 @@ pygame.mixer.music.load(audio_data)
 tr = 0
 bits_in_minute = 60.0
 er = 1
+tic = 0
+toc = 0
 y, sr = librosa.load(audio_data)
 print(type(y), type(sr))
 y_harmonic, y_percussive = librosa.effects.hpss(y)
@@ -25,8 +27,12 @@ beat_nums = np.arange(1, np.size(beat_times))
 pygame.mixer.music.play()
 for i in beat_frames:
     # print(i, "секунда")
-    time.sleep(i - tr)
+    time.sleep(i - tr - (toc - tic))
+    tic = time.perf_counter()
+    # основной код начинается
     print("BIT", er)
     tr = i
     er += 1
     print()
+    # основной код заканчивается
+    toc = time.perf_counter()
