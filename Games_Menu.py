@@ -3,7 +3,7 @@ import time
 import pygame
 
 
-def get_click(screen, pos):
+def get_click(pos):
     if 1200 > pos[0] > 1000 and 600 > pos[1] > 500:
         print("Игра началась")
 
@@ -337,7 +337,7 @@ while run:
                 if event.type == pygame.QUIT:
                     run = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    get_click(screen, event.pos)
+                    get_click(event.pos)
             pygame.display.flip()
 
     elif game:
