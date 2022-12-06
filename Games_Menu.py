@@ -124,6 +124,7 @@ def draw_creator(screen, color):
     text_y = height // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
+
 def loading(screen, rotaite):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
@@ -138,11 +139,13 @@ def loading(screen, rotaite):
     rot_rect = rot.get_rect(
         center=(1200, 580))
     screen.blit(rot, rot_rect)
+
+
 pygame.init()
 size = width, height = 1280, 640
 fullscreen = False
 if fullscreen:
-    screen = pygame.display.set_mode(size,  pygame.FULLSCREEN)
+    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 else:
     screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
