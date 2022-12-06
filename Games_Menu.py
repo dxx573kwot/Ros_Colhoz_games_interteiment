@@ -125,7 +125,11 @@ def draw_creator(screen, color):
 
 pygame.init()
 size = width, height = 1280, 640
-screen = pygame.display.set_mode(size)
+fullscreen = False
+if fullscreen:
+    screen = pygame.display.set_mode(size,  pygame.FULLSCREEN)
+else:
+    screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 run = True
 main = True
