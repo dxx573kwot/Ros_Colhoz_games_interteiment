@@ -3,7 +3,7 @@ import librosa.display
 import numpy as np
 import pygame
 pygame.init()
-audio_data = 'file2.wav'
+audio_data = 'Musik/main.wav'
 pygame.mixer.music.load(audio_data)
 tr, tic, toc = 0, 0, 0
 bits_in_minute = 60.0

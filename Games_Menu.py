@@ -63,6 +63,9 @@ schena1 = False
 schena2 = False
 schena3 = False
 color = 0
+audio_data = 'Musik/main.wav'
+pygame.mixer.music.load(audio_data)
+pygame.mixer.music.play()
 while run:
     if main:
         if cutschen:
