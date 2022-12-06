@@ -55,6 +55,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 run = True
 main = True
+game = False
 cutschen = True
 schena = True
 schena0 = False
@@ -143,3 +144,6 @@ while run:
             screen.fill((0, 0, 0))
             pygame.display.flip()
             run = False
+    elif game:
+        pass
+        # сдесь пишем игру
