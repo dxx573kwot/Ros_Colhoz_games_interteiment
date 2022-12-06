@@ -12,6 +12,7 @@ def get_click(pos):
 
 def draw_titri(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -21,6 +22,7 @@ def draw_titri(screen, color):
 
 def draw_titri_v_nachale_igri(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -35,6 +37,7 @@ def draw_titri_v_nachale_igri(screen, color):
 
 def draw_creator_oleg(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -44,6 +47,7 @@ def draw_creator_oleg(screen, color):
 
 def draw_news(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -58,6 +62,7 @@ def draw_news(screen, color):
 
 def draw_balli(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -67,6 +72,7 @@ def draw_balli(screen, color):
 
 def draw_drugie_igri(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -81,6 +87,7 @@ def draw_drugie_igri(screen, color):
 
 def draw_rehizer(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -90,6 +97,7 @@ def draw_rehizer(screen, color):
 
 def draw_ne_nuhen(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -104,6 +112,7 @@ def draw_ne_nuhen(screen, color):
 
 def draw_name(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -113,6 +122,7 @@ def draw_name(screen, color):
 
 def draw_creator(screen, color):
     screen.fill((0, 0, 0))
+    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -139,6 +149,15 @@ def loading(screen, rotaite):
     rot_rect = rot.get_rect(
         center=(1200, 580))
     screen.blit(rot, rot_rect)
+
+
+def skeap(screen):
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font(None, 15)
+    text = font.render("нажмите ЛКМ для пропуска", True, (255, 255, 255))
+    text_x = 1100
+    text_y = 600
+    screen.blit(text, (text_x, text_y))
 
 
 pygame.init()
