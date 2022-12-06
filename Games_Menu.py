@@ -5,7 +5,9 @@ import pygame
 
 def get_click(pos):
     if 1200 > pos[0] > 1000 and 600 > pos[1] > 500:
-        print("Игра началась")
+        return True
+    else:
+        return False
 
 
 def draw_titri(screen, color):
@@ -122,7 +124,20 @@ def draw_creator(screen, color):
     text_y = height // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
-
+def loading(screen, rotaite):
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font(None, 50)
+    text = font.render("Loading", True, (255, 255, 255))
+    text_x = 1000
+    text_y = 500
+    screen.blit(text, (text_x, text_y))
+    dog_surf = pygame.image.load(
+        'Textur/loading.png').convert()
+    rot = pygame.transform.rotate(
+        dog_surf, rotaite)
+    rot_rect = rot.get_rect(
+        center=(1200, 580))
+    screen.blit(rot, rot_rect)
 pygame.init()
 size = width, height = 1280, 640
 fullscreen = False
@@ -146,6 +161,7 @@ schena6 = False
 schena7 = False
 schena8 = False
 color = 0
+roteit = 0
 audio_data = 'Musik/main.wav'
 pygame.mixer.music.load(audio_data)
 pygame.mixer.music.play(-1)
@@ -341,9 +357,12 @@ while run:
                 if event.type == pygame.QUIT:
                     run = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    get_click(event.pos)
+                    if get_click(event.pos):
+                        main = False
+                        game = True
             pygame.display.flip()
 
     elif game:
-        pass
-        # сдесь пишем игру
+        loading(screen, roteit)
+        roteit += 1
+        pygame.display.flip()
