@@ -2,7 +2,6 @@ import time
 import librosa.display
 import numpy as np
 import pygame
-import threading
 import random
 
 
@@ -167,10 +166,9 @@ def test_level():
         time.sleep(i - tr - (toc - tic))
         tic = time.perf_counter()
         # основной код начинается
-        print("BIT", er)
-        tr = i
-        er += 1
-        print()
+        render()
+        print(1)
+        pygame.display.flip()
         # основной код заканчивается
         toc = time.perf_counter()
 
@@ -190,11 +188,11 @@ def render():
                         center=point_map[w][r])
                     screen.blit(rot, rot_rect)
                     dog_surf = pygame.image.load(
-                        random.choice(hero_texture)).convert()
+                        random.choice(hero_texture))
                     rot = pygame.transform.rotate(
                         dog_surf, 90)
                     rot_rect = rot.get_rect(
-                        center=point_map[w][r])
+                        bottomright=point_map[w][r])
                     screen.blit(rot, rot_rect)
                 except IndexError:
                     continue
@@ -461,5 +459,5 @@ while run:
             pygame.display.flip()
 
     elif game:
-        render()
+        test_level()
         pygame.display.flip()
