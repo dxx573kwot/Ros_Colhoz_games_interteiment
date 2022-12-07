@@ -179,6 +179,7 @@ def render():
     global hit_map, point_map, hero_texture, wall_texture
     for w, y in enumerate(hit_map):
         for r, x in enumerate(y):
+            print(y)
             if "H" in x:
                 try:
                     dog_surf = pygame.image.load(
@@ -186,16 +187,16 @@ def render():
                     rot = pygame.transform.rotate(
                         dog_surf, 90)
                     rot_rect = rot.get_rect(
-                        center=point_map[r][w])
+                        center=point_map[w][r])
                     screen.blit(rot, rot_rect)
                     dog_surf = pygame.image.load(
                         random.choice(hero_texture)).convert()
                     rot = pygame.transform.rotate(
                         dog_surf, 90)
                     rot_rect = rot.get_rect(
-                        center=point_map[r][w])
+                        center=point_map[w][r])
                     screen.blit(rot, rot_rect)
-                except:
+                except IndexError:
                     continue
             if "s" in x:
                 try:
@@ -257,7 +258,7 @@ point_map = [
 H - персонаж
 s - задний фон
 '''
-hit_map = [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"],
+hit_map = [[["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
            [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
            [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
            [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
