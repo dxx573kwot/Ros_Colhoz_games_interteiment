@@ -1,6 +1,9 @@
 import time
-
+import librosa.display
+import numpy as np
 import pygame
+import threading
+import random
 
 
 def get_click(pos):
@@ -12,7 +15,6 @@ def get_click(pos):
 
 def draw_titri(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -22,7 +24,6 @@ def draw_titri(screen, color):
 
 def draw_titri_v_nachale_igri(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -37,7 +38,6 @@ def draw_titri_v_nachale_igri(screen, color):
 
 def draw_creator_oleg(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -47,7 +47,6 @@ def draw_creator_oleg(screen, color):
 
 def draw_news(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -62,7 +61,6 @@ def draw_news(screen, color):
 
 def draw_balli(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -72,7 +70,6 @@ def draw_balli(screen, color):
 
 def draw_drugie_igri(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -87,7 +84,6 @@ def draw_drugie_igri(screen, color):
 
 def draw_rehizer(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -97,7 +93,6 @@ def draw_rehizer(screen, color):
 
 def draw_ne_nuhen(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -112,7 +107,6 @@ def draw_ne_nuhen(screen, color):
 
 def draw_name(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (color, color, color))
     text_x = width // 2 - text.get_width() // 2
@@ -122,7 +116,6 @@ def draw_name(screen, color):
 
 def draw_creator(screen, color):
     screen.fill((0, 0, 0))
-    skeap(screen)
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (255, 255, 255))
     text_x = width // 2 - text.get_width() // 2
@@ -151,13 +144,70 @@ def loading(screen, rotaite):
     screen.blit(rot, rot_rect)
 
 
-def skeap(screen):
-    screen.fill((0, 0, 0))
-    font = pygame.font.Font(None, 15)
-    text = font.render("нажмите ЛКМ для пропуска", True, (255, 255, 255))
-    text_x = 1100
-    text_y = 600
-    screen.blit(text, (text_x, text_y))
+def test_level():
+    global rady
+    audio_data = 'Musik/Sacrifice.wav'
+    pygame.mixer.music.load(audio_data)
+    tr, tic, toc = 0, 0, 0
+    bits_in_minute = 60.0
+    er = 1
+    y, sr = librosa.load(audio_data)
+    print(type(y), type(sr))
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print('Detected Tempo: ' + str(tempo) + ' beats/min')
+    beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+    beat_time_diff = np.ediff1d(beat_times)
+    beat_nums = np.arange(1, np.size(beat_times))
+    pygame.mixer.music.play()
+    rady = True
+    for i in beat_frames:
+        # print(i, "секунда")
+        time.sleep(i - tr - (toc - tic))
+        tic = time.perf_counter()
+        # основной код начинается
+        print("BIT", er)
+        tr = i
+        er += 1
+        print()
+        # основной код заканчивается
+        toc = time.perf_counter()
+
+
+def render():
+    global hit_map, point_map, hero_texture, wall_texture
+    for w, y in enumerate(hit_map):
+        for r, x in enumerate(y):
+            if "H" in x:
+                try:
+                    dog_surf = pygame.image.load(
+                        random.choice(wall_texture)).convert()
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
+                        center=point_map[r][w])
+                    screen.blit(rot, rot_rect)
+                    dog_surf = pygame.image.load(
+                        random.choice(hero_texture)).convert()
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
+                        center=point_map[r][w])
+                    screen.blit(rot, rot_rect)
+                except:
+                    continue
+            if "s" in x:
+                try:
+                    dog_surf = pygame.image.load(
+                        random.choice(wall_texture)).convert()
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(rot, rot_rect)
+                except IndexError:
+                    continue
 
 
 pygame.init()
@@ -182,11 +232,36 @@ schena5 = False
 schena6 = False
 schena7 = False
 schena8 = False
+load = True
+rady = False
+roteit_hero = False
+wall_texture = ["Textur/CUMmen.jpg"]
+hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
 color = 0
 roteit = 0
 audio_data = 'Musik/main.wav'
 pygame.mixer.music.load(audio_data)
 pygame.mixer.music.play(-1)
+point_map = [
+    [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
+    [(54, 182), (182, 182), (310, 182), (310, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
+     (1206, 182)],
+    [(54, 310), (182, 310), (310, 310), (438, 310), (566, 310), (694, 310), (822, 310), (950, 310), (1078, 310),
+     (1206, 310)],
+    [(54, 438), (182, 438), (310, 438), (438, 438), (566, 438), (694, 438), (822, 438), (950, 438), (1078, 438),
+     (1206, 438)],
+    [(54, 566), (182, 566), (310, 566), (438, 566), (566, 566), (694, 566), (822, 566), (950, 566), (1078, 566),
+     (1206, 566)]]
+'''
+коды объектов:
+H - персонаж
+s - задний фон
+'''
+hit_map = [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"],
+           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+           [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
 while run:
     if main:
         if cutschen:
@@ -385,6 +460,5 @@ while run:
             pygame.display.flip()
 
     elif game:
-        loading(screen, roteit)
-        roteit += 1
+        render()
         pygame.display.flip()
