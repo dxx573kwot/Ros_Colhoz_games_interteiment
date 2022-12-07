@@ -190,11 +190,11 @@ def render():
                         center=point_map[w][r])
                     screen.blit(rot, rot_rect)
                     dog_surf = pygame.image.load(
-                        random.choice(hero_texture)).convert()
+                        random.choice(hero_texture))
                     rot = pygame.transform.rotate(
                         dog_surf, 90)
                     rot_rect = rot.get_rect(
-                        center=point_map[w][r])
+                        bottomright=point_map[w][r])
                     screen.blit(rot, rot_rect)
                 except IndexError:
                     continue
@@ -462,4 +462,5 @@ while run:
 
     elif game:
         render()
+        time.sleep(0.75)
         pygame.display.flip()
