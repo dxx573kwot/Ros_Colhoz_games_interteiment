@@ -469,11 +469,12 @@ while run:
             pygame.mixer.music.load(audio_data_Sacrifice)
             pygame.mixer.music.play()
             first = False
-        tic = time.perf_counter()
-        if i > render_audio_Sacrifice[a]:
+            tic = time.perf_counter()
+        if toc > render_audio_Sacrifice[a]:
+            print("Bit!")
             render()
             a += 1
-        i = i + (toc - tic)
-        print(tic, toc)
+        toc = time.perf_counter() - tic
+        print(tic, toc, render_audio_Sacrifice[a])
         pygame.display.flip()
-        toc = time.perf_counter()
+        clock.tick(60)
