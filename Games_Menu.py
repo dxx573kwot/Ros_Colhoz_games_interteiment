@@ -2,6 +2,7 @@ import time
 import librosa.display
 import numpy as np
 import pygame
+import threading
 import random
 
 
@@ -143,7 +144,7 @@ def loading(screen, rotaite):
     screen.blit(rot, rot_rect)
 
 
-def test_level(beat_frames):
+def test_level():
     global rady
     audio_data = 'Musik/Sacrifice.wav'
     pygame.mixer.music.load(audio_data)
@@ -156,6 +157,9 @@ def test_level(beat_frames):
     tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                  trim=True)
     print('Detected Tempo: ' + str(tempo) + ' beats/min')
+    beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+    beat_time_diff = np.ediff1d(beat_times)
+    beat_nums = np.arange(1, np.size(beat_times))
     pygame.mixer.music.play()
     rady = True
     for i in beat_frames:
@@ -163,9 +167,10 @@ def test_level(beat_frames):
         time.sleep(i - tr - (toc - tic))
         tic = time.perf_counter()
         # основной код начинается
-        render()
-        print(1)
-        pygame.display.flip()
+        print("BIT", er)
+        tr = i
+        er += 1
+        print()
         # основной код заканчивается
         toc = time.perf_counter()
 
@@ -179,40 +184,40 @@ def render():
                 try:
                     dog_surf = pygame.image.load(
                         random.choice(wall_texture)).convert()
-                    rot_rect = dog_surf.get_rect(
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
                         center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
+                    screen.blit(rot, rot_rect)
                     dog_surf = pygame.image.load(
-                        random.choice(hero_texture))
-                    rot_rect = dog_surf.get_rect(
-                        bottomright=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
+                        random.choice(hero_texture)).convert()
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(rot, rot_rect)
                 except IndexError:
                     continue
             if "s" in x:
                 try:
                     dog_surf = pygame.image.load(
                         random.choice(wall_texture)).convert()
-                    rot_rect = dog_surf.get_rect(
+                    rot = pygame.transform.rotate(
+                        dog_surf, 90)
+                    rot_rect = rot.get_rect(
                         center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
+                    screen.blit(rot, rot_rect)
                 except IndexError:
                     continue
 
 
-def musik_render(audio_data):
-    print("Рендер " + audio_data + " начат")
-    bits_in_minute = 60.0
-    y, sr = librosa.load(audio_data)
-    y_harmonic, y_percussive = librosa.effects.hpss(y)
-    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
-                                                 trim=True)
-    print("Рендер " + audio_data + " окончен")
-    print()
-    return beat_frames
-
-
 pygame.init()
+size = width, height = 1280, 640
+fullscreen = False
+if fullscreen:
+    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+else:
+    screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 run = True
 main = True
@@ -235,14 +240,8 @@ wall_texture = ["Textur/CUMmen.jpg"]
 hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
 color = 0
 roteit = 0
-audio_data_main = 'Musik/main.wav'
-audio_data_Sacrifice = 'Musik/Sacrifice.wav'
-render_audio_Sacrifice = musik_render(audio_data_Sacrifice)
-audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
-render_audio_Forever_Mine = musik_render(audio_data_Forever_Mine)
-audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
-render_audio_Jounrey_Home = musik_render(audio_data_The_Jounrey_Home)
-pygame.mixer.music.load(audio_data_main)
+audio_data = 'Musik/main.wav'
+pygame.mixer.music.load(audio_data)
 pygame.mixer.music.play(-1)
 point_map = [
     [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
@@ -264,12 +263,6 @@ hit_map = [[["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]
            [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
            [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
            [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
-size = width, height = 1280, 640
-fullscreen = False
-if fullscreen:
-    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-else:
-    screen = pygame.display.set_mode(size)
 while run:
     if main:
         if cutschen:
@@ -468,5 +461,5 @@ while run:
             pygame.display.flip()
 
     elif game:
-        test_level()
+        render()
         pygame.display.flip()
