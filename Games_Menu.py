@@ -480,7 +480,6 @@ while run:
 
         draw_lkm(screen, main2)
         pygame.display.flip()
-
     elif game:
         if first:
             pygame.mixer.music.load(audio_data_Sacrifice)
