@@ -32,6 +32,7 @@ while True:
     i = i + (tic - toc)
     toc = time.perf_counter()
 '''for i in beat_frames:
+
     # print(i, "секунда")
     time.sleep(i - tr - (toc - tic))
     tic = time.perf_counter()
