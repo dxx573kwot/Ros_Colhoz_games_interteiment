@@ -145,17 +145,9 @@ def loading(screen, rotaite):
 
 def test_level(beat_frames):
     global rady
-    audio_data = 'Musik/Sacrifice.wav'
-    pygame.mixer.music.load(audio_data)
     tr, tic, toc = 0, 0, 0
     bits_in_minute = 60.0
     er = 1
-    y, sr = librosa.load(audio_data)
-    print(type(y), type(sr))
-    y_harmonic, y_percussive = librosa.effects.hpss(y)
-    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
-                                                 trim=True)
-    print('Detected Tempo: ' + str(tempo) + ' beats/min')
     pygame.mixer.music.play()
     rady = True
     for i in beat_frames:
@@ -168,6 +160,7 @@ def test_level(beat_frames):
         pygame.display.flip()
         # основной код заканчивается
         toc = time.perf_counter()
+        tr = i
 
 
 def render():
@@ -178,7 +171,7 @@ def render():
             if "H" in x:
                 try:
                     dog_surf = pygame.image.load(
-                        random.choice(wall_texture)).convert()
+                        random.choice(wall_texture))
                     rot_rect = dog_surf.get_rect(
                         center=point_map[w][r])
                     screen.blit(dog_surf, rot_rect)
@@ -192,7 +185,7 @@ def render():
             if "s" in x:
                 try:
                     dog_surf = pygame.image.load(
-                        random.choice(wall_texture)).convert()
+                        random.choice(wall_texture))
                     rot_rect = dog_surf.get_rect(
                         center=point_map[w][r])
                     screen.blit(dog_surf, rot_rect)
@@ -215,6 +208,7 @@ def musik_render(audio_data):
 pygame.init()
 clock = pygame.time.Clock()
 run = True
+first = True
 main = True
 game = False
 cutschen = True
@@ -235,13 +229,16 @@ wall_texture = ["Textur/CUMmen.jpg"]
 hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
 color = 0
 roteit = 0
+a = 0
+i = 0.1
+toc = 0
 audio_data_main = 'Musik/main.wav'
 audio_data_Sacrifice = 'Musik/Sacrifice.wav'
 render_audio_Sacrifice = musik_render(audio_data_Sacrifice)
-audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
+'''audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
 render_audio_Forever_Mine = musik_render(audio_data_Forever_Mine)
 audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
-render_audio_Jounrey_Home = musik_render(audio_data_The_Jounrey_Home)
+render_audio_Jounrey_Home = musik_render(audio_data_The_Jounrey_Home)'''
 pygame.mixer.music.load(audio_data_main)
 pygame.mixer.music.play(-1)
 point_map = [
@@ -468,5 +465,15 @@ while run:
             pygame.display.flip()
 
     elif game:
-        test_level()
+        if first:
+            pygame.mixer.music.load(audio_data_Sacrifice)
+            pygame.mixer.music.play()
+            first = False
+        tic = time.perf_counter()
+        if i > render_audio_Sacrifice[a]:
+            render()
+            a += 1
+        i = i + (toc - tic)
+        print(tic, toc)
         pygame.display.flip()
+        toc = time.perf_counter()
