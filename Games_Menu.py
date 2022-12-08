@@ -191,6 +191,12 @@ def render():
                     screen.blit(dog_surf, rot_rect)
                 except IndexError:
                     continue
+                except FileNotFoundError:
+                    dog_surf = pygame.image.load(
+                        random.choice(invalid_texture))
+                    rot_rect = dog_surf.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(dog_surf, rot_rect)
             if "s" in x:
                 try:
                     dog_surf = pygame.image.load(
@@ -200,6 +206,12 @@ def render():
                     screen.blit(dog_surf, rot_rect)
                 except IndexError:
                     continue
+                except FileNotFoundError:
+                    dog_surf = pygame.image.load(
+                        random.choice(invalid_texture))
+                    rot_rect = dog_surf.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(dog_surf, rot_rect)
 
 
 def musik_render(audio_data):
@@ -237,6 +249,7 @@ rady = False
 roteit_hero = False
 wall_texture = ["Textur/CUMmen.jpg"]
 hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
+invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
 color = 0
 roteit = 0
 a = 0
