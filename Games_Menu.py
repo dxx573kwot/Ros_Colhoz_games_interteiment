@@ -127,6 +127,15 @@ def draw_creator(screen, color):
     screen.blit(text, (text_x, text_y))
 
 
+def draw_lkm(screen, i):
+    if i:
+        font = pygame.font.Font(None, 20)
+        text = font.render("нажмите лкм для пропуска", True, (255, 255, 255))
+        text_x = 1100
+        text_y = 600
+        screen.blit(text, (text_x, text_y))
+
+
 def loading(screen, rotaite):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
@@ -182,6 +191,12 @@ def render():
                     screen.blit(dog_surf, rot_rect)
                 except IndexError:
                     continue
+                except FileNotFoundError:
+                    dog_surf = pygame.image.load(
+                        random.choice(invalid_texture))
+                    rot_rect = dog_surf.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(dog_surf, rot_rect)
             if "s" in x:
                 try:
                     dog_surf = pygame.image.load(
@@ -191,6 +206,12 @@ def render():
                     screen.blit(dog_surf, rot_rect)
                 except IndexError:
                     continue
+                except FileNotFoundError:
+                    dog_surf = pygame.image.load(
+                        random.choice(invalid_texture))
+                    rot_rect = dog_surf.get_rect(
+                        center=point_map[w][r])
+                    screen.blit(dog_surf, rot_rect)
 
 
 def musik_render(audio_data):
@@ -208,6 +229,7 @@ def musik_render(audio_data):
 pygame.init()
 clock = pygame.time.Clock()
 run = True
+main2 = True
 first = True
 main = True
 game = False
@@ -227,6 +249,7 @@ rady = False
 roteit_hero = False
 wall_texture = ["Textur/CUMmen.jpg"]
 hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
+invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
 color = 0
 roteit = 0
 a = 0
@@ -305,7 +328,6 @@ while run:
                 draw_titri_v_nachale_igri(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena1:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -323,7 +345,6 @@ while run:
                 draw_creator_oleg(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena2:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -341,7 +362,6 @@ while run:
                 draw_news(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena3:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -359,7 +379,6 @@ while run:
                 draw_balli(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena4:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -377,7 +396,6 @@ while run:
                 draw_drugie_igri(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena5:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -395,7 +413,6 @@ while run:
                 draw_rehizer(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena6:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -413,7 +430,6 @@ while run:
                 draw_ne_nuhen(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena7:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -431,7 +447,6 @@ while run:
                 draw_name(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
             elif schena8:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -449,9 +464,9 @@ while run:
                 draw_creator(screen, color)
                 color += 1
                 time.sleep(0.01)
-                pygame.display.flip()
         else:
             # меню
+            main2 = False
             sun_surf = pygame.image.load('Textur/main.jpg')
             sun_rect = sun_surf.get_rect()
             screen.blit(sun_surf, sun_rect)
@@ -462,7 +477,9 @@ while run:
                     if get_click(event.pos):
                         main = False
                         game = True
-            pygame.display.flip()
+
+        draw_lkm(screen, main2)
+        pygame.display.flip()
 
     elif game:
         if first:
