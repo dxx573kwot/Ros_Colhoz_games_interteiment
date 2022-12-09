@@ -2,7 +2,7 @@ import time
 import librosa.display
 import pygame
 import random
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 
 def get_click(pos):
@@ -153,7 +153,6 @@ def loading(screen, rotaite):
 
 
 def test_level(beat_frames):
-    global rady
     tr, tic, toc = 0, 0, 0
     bits_in_minute = 60.0
     er = 1
@@ -173,7 +172,7 @@ def test_level(beat_frames):
 
 
 def render():
-    global hit_map, point_map, hero_texture, wall_texture
+    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
     screen.fill((0, 0, 0))
     for w, y in enumerate(hit_map):
         for r, x in enumerate(y):
@@ -226,8 +225,7 @@ def musik_render(audio_data):
     return beat_frames
 
 
-def musik_render_Sacrifice(audio_data):
-    global render_audio_Sacrifice
+def musik_render_Sacrifice(audio_data, q):
     print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
@@ -236,11 +234,10 @@ def musik_render_Sacrifice(audio_data):
                                                  trim=True)
     print("Рендер " + audio_data + " окончен")
     print()
-    render_audio_Sacrifice = beat_frames
+    q.put([beat_frames, True])
 
 
-def musik_render_Forever_Mine(audio_data):
-    global render_audio_Forever_Mine
+def musik_render_Forever_Mine(audio_data, q):
     print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
@@ -249,11 +246,10 @@ def musik_render_Forever_Mine(audio_data):
                                                  trim=True)
     print("Рендер " + audio_data + " окончен")
     print()
-    render_audio_Forever_Mine = beat_frames
+    q.put([beat_frames, True])
 
 
-def musik_render_The_Jounrey_Home(audio_data):
-    global render_audio_The_Jounrey_Home
+def musik_render_The_Jounrey_Home(audio_data, q):
     print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
@@ -262,7 +258,26 @@ def musik_render_The_Jounrey_Home(audio_data):
                                                  trim=True)
     print("Рендер " + audio_data + " окончен")
     print()
-    render_audio_The_Jounrey_Home = beat_frames
+    q.put([beat_frames, True])
+
+
+def go_up():
+    global hit_map
+    x = 0
+    y = 0
+    per = []
+    for w, i in enumerate(hit_map):
+        for r, c in enumerate(i):
+            if c == ["H"]:
+                x = w
+                y = r
+                per = i
+                hit_map[w][r] = ["s"]
+    per[y] = ["H"]
+    if x != 0:
+        hit_map.insert(x - 1, per)
+    else:
+        hit_map.insert(0, per)
 
 
 if __name__ == '__main__':
@@ -287,6 +302,13 @@ if __name__ == '__main__':
     load = True
     rady = False
     roteit_hero = False
+    up = False
+    down = False
+    left = False
+    right = False
+    rady1 = False
+    rady2 = False
+    rady3 = False
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
     invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
@@ -300,10 +322,25 @@ if __name__ == '__main__':
     audio_data_Sacrifice = 'Musik/Sacrifice.wav'
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
-    render_audio_Sacrifice = []
-    render_audio_The_Forever_Mine = []
-    render_audio_The_Jounrey_Home = []
-    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav",))
+    q1 = Queue()
+    q2 = Queue()
+    q3 = Queue()
+    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav", q1,))
+    p2 = Process(target=musik_render_Forever_Mine, args=("Musik/Forever_Mine.wav", q2,))
+    p3 = Process(target=musik_render_The_Jounrey_Home, args=("Musik/The_Jounrey_Home.wav", q3,))
+    p.start()
+    p2.start()
+    p3.start()
+    p.join()
+    render_audio_Sacrifice = q1.get()[0]
+    p2.join()
+    render_audio_The_Forever_Mine = q2.get()[0]
+    p3.join()
+    render_audio_The_Jounrey_Home = q3.get()[0]
+    rady1 = q1.get()[1]
+    rady2 = q2.get()[1]
+    rady3 = q3.get()[1]
+    '''    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav",))
     p1 = Process(target=musik_render_Forever_Mine, args=("Musik/Forever_Mine.wav",))
     p2 = Process(target=musik_render_The_Jounrey_Home, args=("Musik/The_Jounrey_Home.wav",))
     p.start()
@@ -311,7 +348,7 @@ if __name__ == '__main__':
     p2.start()
     p.join()
     p1.join()
-    p2.join()
+    p2.join()'''
     pygame.mixer.music.load(audio_data_main)
     pygame.mixer.music.play(-1)
     point_map = [
@@ -342,7 +379,11 @@ if __name__ == '__main__':
         screen = pygame.display.set_mode(size)
     while run:
         if main:
-            if cutschen:
+            if cutschen == False and (rady1 == False or rady2 == False or rady3 == False):
+                loading(screen, roteit)
+                roteit += 1
+                pygame.display.flip()
+            elif cutschen:
                 if schena:
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
@@ -514,6 +555,7 @@ if __name__ == '__main__':
                     draw_creator(screen, color)
                     color += 1
                     time.sleep(0.01)
+                draw_lkm(screen, main2)
             else:
                 # меню
                 main2 = False
@@ -528,15 +570,26 @@ if __name__ == '__main__':
                             main = False
                             game = True
 
-            draw_lkm(screen, main2)
             pygame.display.flip()
         elif game:
+            print(len(render_audio_Sacrifice))
             if first:
                 pygame.mixer.music.load(audio_data_Sacrifice)
                 pygame.mixer.music.play()
                 first = False
                 tic = time.perf_counter()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    up = True
+                elif i.type == pygame.KEYDOWN:
+                    if i.key == pygame.K_w:
+                        up = True
             if toc > render_audio_Sacrifice[a]:
+                if up:
+                    up = False
+                    go_up()
                 print("Bit!")
                 render()
                 a += 1
