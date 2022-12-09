@@ -1,8 +1,8 @@
 import time
 import librosa.display
-import numpy as np
 import pygame
 import random
+from multiprocessing import Process
 
 
 def get_click(pos):
@@ -226,271 +226,321 @@ def musik_render(audio_data):
     return beat_frames
 
 
-pygame.init()
-clock = pygame.time.Clock()
-run = True
-main2 = True
-first = True
-main = True
-game = False
-cutschen = True
-schena = True
-schena0 = False
-schena1 = False
-schena2 = False
-schena3 = False
-schena4 = False
-schena5 = False
-schena6 = False
-schena7 = False
-schena8 = False
-load = True
-rady = False
-roteit_hero = False
-wall_texture = ["Textur/CUMmen.jpg"]
-hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
-invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
-color = 0
-roteit = 0
-a = 0
-i = 0.1
-toc = 0
-audio_data_main = 'Musik/main.wav'
-audio_data_Sacrifice = 'Musik/Sacrifice.wav'
-render_audio_Sacrifice = musik_render(audio_data_Sacrifice)
-'''audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
-render_audio_Forever_Mine = musik_render(audio_data_Forever_Mine)
-audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
-render_audio_Jounrey_Home = musik_render(audio_data_The_Jounrey_Home)'''
-pygame.mixer.music.load(audio_data_main)
-pygame.mixer.music.play(-1)
-point_map = [
-    [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
-    [(54, 182), (182, 182), (310, 182), (438, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
-     (1206, 182)],
-    [(54, 310), (182, 310), (310, 310), (438, 310), (566, 310), (694, 310), (822, 310), (950, 310), (1078, 310),
-     (1206, 310)],
-    [(54, 438), (182, 438), (310, 438), (438, 438), (566, 438), (694, 438), (822, 438), (950, 438), (1078, 438),
-     (1206, 438)],
-    [(54, 566), (182, 566), (310, 566), (438, 566), (566, 566), (694, 566), (822, 566), (950, 566), (1078, 566),
-     (1206, 566)]]
-'''
-коды объектов:
-H - персонаж
-s - задний фон
-'''
-hit_map = [[["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
-size = width, height = 1280, 640
-fullscreen = False
-if fullscreen:
-    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-else:
-    screen = pygame.display.set_mode(size)
-while run:
-    if main:
-        if cutschen:
-            if schena:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_titri(screen, color)
-                    color = 0
-                    time.sleep(1)
-                    schena = False
-                    schena0 = True
-                    pygame.display.flip()
-                    continue
-                draw_titri(screen, color)
-                color += 1
-                time.sleep(0.01)
-                pygame.display.flip()
-            elif schena0:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_titri_v_nachale_igri(screen, color)
-                    color = 0
-                    time.sleep(1)
-                    schena0 = False
-                    schena1 = True
-                    pygame.display.flip()
-                    continue
-                draw_titri_v_nachale_igri(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena1:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_creator_oleg(screen, color)
-                    color = 0
-                    time.sleep(1)
-                    schena1 = False
-                    schena2 = True
-                    pygame.display.flip()
-                    continue
-                draw_creator_oleg(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena2:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_news(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena2 = False
-                    schena3 = True
-                    pygame.display.flip()
-                    continue
-                draw_news(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena3:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_balli(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena3 = False
-                    schena4 = True
-                    pygame.display.flip()
-                    continue
-                draw_balli(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena4:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_drugie_igri(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena4 = False
-                    schena5 = True
-                    pygame.display.flip()
-                    continue
-                draw_drugie_igri(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena5:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_rehizer(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena5 = False
-                    schena6 = True
-                    pygame.display.flip()
-                    continue
-                draw_rehizer(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena6:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_ne_nuhen(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena6 = False
-                    schena7 = True
-                    pygame.display.flip()
-                    continue
-                draw_ne_nuhen(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena7:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_name(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena7 = False
-                    schena8 = True
-                    pygame.display.flip()
-                    continue
-                draw_name(screen, color)
-                color += 1
-                time.sleep(0.01)
-            elif schena8:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        cutschen = False
-                if color == 255:
-                    draw_creator(screen, color)
-                    color = 0
-                    time.sleep(3)
-                    schena8 = False
-                    pygame.display.flip()
-                    cutschen = False
-                    continue
-                draw_creator(screen, color)
-                color += 1
-                time.sleep(0.01)
-        else:
-            # меню
-            main2 = False
-            sun_surf = pygame.image.load('Textur/main.jpg')
-            sun_rect = sun_surf.get_rect()
-            screen.blit(sun_surf, sun_rect)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if get_click(event.pos):
-                        main = False
-                        game = True
+def musik_render_Sacrifice(audio_data):
+    global render_audio_Sacrifice
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_Sacrifice = beat_frames
 
-        draw_lkm(screen, main2)
-        pygame.display.flip()
-    elif game:
-        if first:
-            pygame.mixer.music.load(audio_data_Sacrifice)
-            pygame.mixer.music.play()
-            first = False
-            tic = time.perf_counter()
-        if toc > render_audio_Sacrifice[a]:
-            print("Bit!")
-            render()
-            a += 1
-        toc = time.perf_counter() - tic
-        print(tic, toc, render_audio_Sacrifice[a])
-        pygame.display.flip()
-        clock.tick(60)
+
+def musik_render_Forever_Mine(audio_data):
+    global render_audio_Forever_Mine
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_Forever_Mine = beat_frames
+
+
+def musik_render_The_Jounrey_Home(audio_data):
+    global render_audio_The_Jounrey_Home
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_The_Jounrey_Home = beat_frames
+
+
+if __name__ == '__main__':
+    pygame.init()
+    clock = pygame.time.Clock()
+    run = True
+    main2 = True
+    first = True
+    main = True
+    game = False
+    cutschen = True
+    schena = True
+    schena0 = False
+    schena1 = False
+    schena2 = False
+    schena3 = False
+    schena4 = False
+    schena5 = False
+    schena6 = False
+    schena7 = False
+    schena8 = False
+    load = True
+    rady = False
+    roteit_hero = False
+    wall_texture = ["Textur/CUMmen.jpg"]
+    hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
+    invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
+    color = 0
+    roteit = 0
+    a = 0
+    i = 0.1
+    toc = 0
+    tic = 0
+    audio_data_main = 'Musik/main.wav'
+    audio_data_Sacrifice = 'Musik/Sacrifice.wav'
+    audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
+    audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
+    render_audio_Sacrifice = []
+    render_audio_The_Forever_Mine = []
+    render_audio_The_Jounrey_Home = []
+    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav",))
+    p1 = Process(target=musik_render_Forever_Mine, args=("Musik/Forever_Mine.wav",))
+    p2 = Process(target=musik_render_The_Jounrey_Home, args=("Musik/The_Jounrey_Home.wav",))
+    p.start()
+    p1.start()
+    p2.start()
+    p.join()
+    p1.join()
+    p2.join()
+    pygame.mixer.music.load(audio_data_main)
+    pygame.mixer.music.play(-1)
+    point_map = [
+        [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
+        [(54, 182), (182, 182), (310, 182), (438, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
+         (1206, 182)],
+        [(54, 310), (182, 310), (310, 310), (438, 310), (566, 310), (694, 310), (822, 310), (950, 310), (1078, 310),
+         (1206, 310)],
+        [(54, 438), (182, 438), (310, 438), (438, 438), (566, 438), (694, 438), (822, 438), (950, 438), (1078, 438),
+         (1206, 438)],
+        [(54, 566), (182, 566), (310, 566), (438, 566), (566, 566), (694, 566), (822, 566), (950, 566), (1078, 566),
+         (1206, 566)]]
+    '''
+    коды объектов:
+    H - персонаж
+    s - задний фон
+    '''
+    hit_map = [[["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+               [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
+               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
+    size = width, height = 1280, 640
+    fullscreen = False
+    if fullscreen:
+        screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+    else:
+        screen = pygame.display.set_mode(size)
+    while run:
+        if main:
+            if cutschen:
+                if schena:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_titri(screen, color)
+                        color = 0
+                        time.sleep(1)
+                        schena = False
+                        schena0 = True
+                        pygame.display.flip()
+                        continue
+                    draw_titri(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                    pygame.display.flip()
+                elif schena0:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_titri_v_nachale_igri(screen, color)
+                        color = 0
+                        time.sleep(1)
+                        schena0 = False
+                        schena1 = True
+                        pygame.display.flip()
+                        continue
+                    draw_titri_v_nachale_igri(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena1:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_creator_oleg(screen, color)
+                        color = 0
+                        time.sleep(1)
+                        schena1 = False
+                        schena2 = True
+                        pygame.display.flip()
+                        continue
+                    draw_creator_oleg(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena2:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_news(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena2 = False
+                        schena3 = True
+                        pygame.display.flip()
+                        continue
+                    draw_news(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena3:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_balli(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena3 = False
+                        schena4 = True
+                        pygame.display.flip()
+                        continue
+                    draw_balli(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena4:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_drugie_igri(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena4 = False
+                        schena5 = True
+                        pygame.display.flip()
+                        continue
+                    draw_drugie_igri(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena5:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_rehizer(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena5 = False
+                        schena6 = True
+                        pygame.display.flip()
+                        continue
+                    draw_rehizer(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena6:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_ne_nuhen(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena6 = False
+                        schena7 = True
+                        pygame.display.flip()
+                        continue
+                    draw_ne_nuhen(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena7:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_name(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena7 = False
+                        schena8 = True
+                        pygame.display.flip()
+                        continue
+                    draw_name(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+                elif schena8:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            cutschen = False
+                    if color == 255:
+                        draw_creator(screen, color)
+                        color = 0
+                        time.sleep(3)
+                        schena8 = False
+                        pygame.display.flip()
+                        cutschen = False
+                        continue
+                    draw_creator(screen, color)
+                    color += 1
+                    time.sleep(0.01)
+            else:
+                # меню
+                main2 = False
+                sun_surf = pygame.image.load('Textur/main.jpg')
+                sun_rect = sun_surf.get_rect()
+                screen.blit(sun_surf, sun_rect)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if get_click(event.pos):
+                            main = False
+                            game = True
+
+            draw_lkm(screen, main2)
+            pygame.display.flip()
+        elif game:
+            if first:
+                pygame.mixer.music.load(audio_data_Sacrifice)
+                pygame.mixer.music.play()
+                first = False
+                tic = time.perf_counter()
+            if toc > render_audio_Sacrifice[a]:
+                print("Bit!")
+                render()
+                a += 1
+            toc = time.perf_counter() - tic
+            print(tic, toc, render_audio_Sacrifice[a])
+            pygame.display.flip()
+            clock.tick(60)

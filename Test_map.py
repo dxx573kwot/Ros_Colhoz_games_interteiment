@@ -1,22 +1,68 @@
-import pygame
+from multiprocessing import Process
+import librosa
 
-point_map = [
-    [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
-    [(54, 182), (182, 182), (310, 182), (310, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
-     (1206, 182)],
-    [(54, 310), (182, 310), (310, 310), (438, 310), (566, 310), (694, 310), (822, 310), (950, 310), (1078, 310),
-     (1206, 310)],
-    [(54, 438), (182, 438), (310, 438), (438, 438), (566, 438), (694, 438), (822, 438), (950, 438), (1078, 438),
-     (1206, 438)],
-    [(54, 566), (182, 566), (310, 566), (438, 566), (566, 566), (694, 566), (822, 566), (950, 566), (1078, 566),
-     (1206, 566)]]
-'''
-коды объектов:
-H - персонаж
-s - задний фон
-'''
-hit_map = [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-           [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
+
+def musik_render(audio_data):
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    return beat_frames
+
+
+def musik_render_Sacrifice(audio_data):
+    global render_audio_Sacrifice
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_Sacrifice = beat_frames
+
+
+def musik_render_Forever_Mine(audio_data):
+    global render_audio_Forever_Mine
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_Forever_Mine = beat_frames
+
+
+def musik_render_The_Jounrey_Home(audio_data):
+    global render_audio_The_Jounrey_Home
+    print("Рендер " + audio_data + " начат")
+    bits_in_minute = 60.0
+    y, sr = librosa.load(audio_data)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                 trim=True)
+    print("Рендер " + audio_data + " окончен")
+    print()
+    render_audio_The_Jounrey_Home = beat_frames
+
+
+audio_data_main = 'Musik/main.wav'
+audio_data_Sacrifice = 'Musik/Sacrifice.wav'
+audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
+audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
+p = Process(target=musik_render_Sacrifice, args=(audio_data_Sacrifice,))
+p.start()
+p.join()
+p1 = Process(target=musik_render_Forever_Mine, args=(audio_data_Forever_Mine,))
+p1.start()
+p1.join()
+p2 = Process(target=musik_render_The_Jounrey_Home, args=(audio_data_The_Jounrey_Home,))
+p2.start()
+p2.join()
