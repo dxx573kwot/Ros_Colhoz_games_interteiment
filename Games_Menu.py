@@ -5,6 +5,23 @@ import random
 from multiprocessing import Process, Queue
 
 
+class Musik_render(Process):
+    def __init__(self, q, audio_data):
+        Process.__init__(self)
+        self.q = q
+        self.audio_data = audio_data
+
+    def run(self):
+        print("Рендер " + self.audio_data + " начат")
+        bits_in_minute = 60.0
+        y, sr = librosa.load(self.audio_data)
+        y_harmonic, y_percussive = librosa.effects.hpss(y)
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                     trim=True)
+        print("Рендер " + self.audio_data + " окончен")
+        self.q.put([beat_frames, True])
+
+
 def get_click(pos):
     if 1200 > pos[0] > 1000 and 600 > pos[1] > 500:
         return True
@@ -325,30 +342,22 @@ if __name__ == '__main__':
     q1 = Queue()
     q2 = Queue()
     q3 = Queue()
-    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav", q1,))
-    p2 = Process(target=musik_render_Forever_Mine, args=("Musik/Forever_Mine.wav", q2,))
-    p3 = Process(target=musik_render_The_Jounrey_Home, args=("Musik/The_Jounrey_Home.wav", q3,))
+    p = Musik_render(q1, "Musik/Sacrifice.wav")
+    p2 = Musik_render(q2, "Musik/Forever_Mine.wav")
+    p3 = Musik_render(q3, "Musik/The_Jounrey_Home.wav")
     p.start()
     p2.start()
     p3.start()
-    p.join()
-    render_audio_Sacrifice = q1.get()[0]
-    p2.join()
-    render_audio_The_Forever_Mine = q2.get()[0]
-    p3.join()
-    render_audio_The_Jounrey_Home = q3.get()[0]
-    rady1 = q1.get()[1]
-    rady2 = q2.get()[1]
-    rady3 = q3.get()[1]
-    '''    p = Process(target=musik_render_Sacrifice, args=("Musik/Sacrifice.wav",))
-    p1 = Process(target=musik_render_Forever_Mine, args=("Musik/Forever_Mine.wav",))
-    p2 = Process(target=musik_render_The_Jounrey_Home, args=("Musik/The_Jounrey_Home.wav",))
-    p.start()
-    p1.start()
-    p2.start()
-    p.join()
-    p1.join()
-    p2.join()'''
+    a1 = q1.get()
+    a2 = q2.get()
+    a3 = q3.get()
+    render_audio_Sacrifice = a1[0]
+    render_audio_The_Forever_Mine = a2[0]
+    render_audio_The_Jounrey_Home = a3[0]
+    rady1 = a1[1]
+    rady2 = a2[1]
+    rady3 = a3[1]
+    print(rady1, rady2, rady3)
     pygame.mixer.music.load(audio_data_main)
     pygame.mixer.music.play(-1)
     point_map = [
@@ -380,6 +389,9 @@ if __name__ == '__main__':
     while run:
         if main:
             if cutschen == False and (rady1 == False or rady2 == False or rady3 == False):
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
                 loading(screen, roteit)
                 roteit += 1
                 pygame.display.flip()
@@ -572,7 +584,6 @@ if __name__ == '__main__':
 
             pygame.display.flip()
         elif game:
-            print(len(render_audio_Sacrifice))
             if first:
                 pygame.mixer.music.load(audio_data_Sacrifice)
                 pygame.mixer.music.play()
@@ -583,9 +594,6 @@ if __name__ == '__main__':
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     up = True
-                elif i.type == pygame.KEYDOWN:
-                    if i.key == pygame.K_w:
-                        up = True
             if toc > render_audio_Sacrifice[a]:
                 if up:
                     up = False
@@ -594,6 +602,5 @@ if __name__ == '__main__':
                 render()
                 a += 1
             toc = time.perf_counter() - tic
-            print(tic, toc, render_audio_Sacrifice[a])
             pygame.display.flip()
             clock.tick(60)
