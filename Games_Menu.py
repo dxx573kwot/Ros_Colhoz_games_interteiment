@@ -4,6 +4,10 @@ import pygame
 import random
 from multiprocessing import Process, Queue
 
+from Map import Board
+from Player import Player
+from Round_and_bits import RoundAndBits
+
 
 class Musik_render(Process):
     def __init__(self, q, audio_data):
@@ -169,65 +173,65 @@ def loading(screen, rotaite):
     screen.blit(rot, rot_rect)
 
 
-def test_level(beat_frames):
-    tr, tic, toc = 0, 0, 0
-    bits_in_minute = 60.0
-    er = 1
-    pygame.mixer.music.play()
-    rady = True
-    for i in beat_frames:
-        # print(i, "секунда")
-        time.sleep(i - tr - (toc - tic))
-        tic = time.perf_counter()
-        # основной код начинается
-        render()
-        print(1)
-        pygame.display.flip()
-        # основной код заканчивается
-        toc = time.perf_counter()
-        tr = i
+#def test_level(beat_frames):
+#    tr, tic, toc = 0, 0, 0
+#    bits_in_minute = 60.0
+#    er = 1
+#    pygame.mixer.music.play()
+#    rady = True
+#    for i in beat_frames:
+#        # print(i, "секунда")
+#        time.sleep(i - tr - (toc - tic))
+#        tic = time.perf_counter()
+#        # основной код начинается
+#        render()
+#        print(1)
+#        pygame.display.flip()
+#        # основной код заканчивается
+#        toc = time.perf_counter()
+#        tr = i
 
 
-def render():
-    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
-    screen.fill((0, 0, 0))
-    for w, y in enumerate(hit_map):
-        for r, x in enumerate(y):
-            if "H" in x:
-                try:
-                    dog_surf = pygame.image.load(
-                        random.choice(wall_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                    dog_surf = pygame.image.load(
-                        random.choice(hero_texture))
-                    rot_rect = dog_surf.get_rect(
-                        bottomright=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                except IndexError:
-                    continue
-                except FileNotFoundError:
-                    dog_surf = pygame.image.load(
-                        random.choice(invalid_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-            if "s" in x:
-                try:
-                    dog_surf = pygame.image.load(
-                        random.choice(wall_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                except IndexError:
-                    continue
-                except FileNotFoundError:
-                    dog_surf = pygame.image.load(
-                        random.choice(invalid_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
+#def render():
+#    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
+#    screen.fill((0, 0, 0))
+    #for w, y in enumerate(hit_map):
+    #    for r, x in enumerate(y):
+    #        if "H" in x:
+    #            try:
+    #                dog_surf = pygame.image.load(
+    #                    random.choice(wall_texture))
+    #                rot_rect = dog_surf.get_rect(
+    #                    center=point_map[w][r])
+    #                screen.blit(dog_surf, rot_rect)
+    #                dog_surf = pygame.image.load(
+    #                    random.choice(hero_texture))
+    #                rot_rect = dog_surf.get_rect(
+    #                    bottomright=point_map[w][r])
+    #                screen.blit(dog_surf, rot_rect)
+    #            except IndexError:
+    #                continue
+    #            except FileNotFoundError:
+    #                dog_surf = pygame.image.load(
+    #                    random.choice(invalid_texture))
+    #                rot_rect = dog_surf.get_rect(
+    #                    center=point_map[w][r])
+    #                screen.blit(dog_surf, rot_rect)
+    #        if "s" in x:
+    #            try:
+    #                dog_surf = pygame.image.load(
+    #                    random.choice(wall_texture))
+    #                rot_rect = dog_surf.get_rect(
+    #                    center=point_map[w][r])
+    #                screen.blit(dog_surf, rot_rect)
+    #            except IndexError:
+    #                continue
+    #            except FileNotFoundError:
+    #                dog_surf = pygame.image.load(
+    #                    random.choice(invalid_texture))
+    #                rot_rect = dog_surf.get_rect(
+    #                    center=point_map[w][r])
+    #                screen.blit(dog_surf, rot_rect)
 
 
 def musik_render(audio_data):
@@ -381,8 +385,16 @@ if __name__ == '__main__':
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
-    size = width, height = 1280, 640
+
+    size = width, height = 1250, 600  # было 1280, 640
     fullscreen = False
+
+    WIDTH, HEIGHT, CELL_SIZE = 25, 12, 50
+    board = Board(WIDTH, HEIGHT)
+    hero = Player(3, 3, WIDTH, HEIGHT)
+    rab = RoundAndBits(board, hero)
+    rab.set_view(0, 0, 50)
+
     if fullscreen:
         screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     else:
@@ -584,7 +596,7 @@ if __name__ == '__main__':
                             game = True
 
             pygame.display.flip()
-        elif game:
+        elif game:  # НАЧАЛО ИГРЫ
             if first:
                 pygame.mixer.music.load(audio_data_Sacrifice)
                 pygame.mixer.music.play()
@@ -593,15 +605,24 @@ if __name__ == '__main__':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    up = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        hero.move("right")
+                    if event.key == pygame.K_DOWN:
+                        hero.move("down")
+                    if event.key == pygame.K_UP:
+                        hero.move("up")
+                    if event.key == pygame.K_LEFT:
+                        hero.move("left")
             if toc > render_audio_Sacrifice[a]:
                 if up:
                     up = False
                     go_up()
                 print("Bit!")
-                render()
+                #render()
                 a += 1
             toc = time.perf_counter() - tic
+            screen.fill((0, 0, 0))
+            rab.render(screen)
             pygame.display.flip()
             clock.tick(60)
