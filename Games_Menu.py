@@ -291,6 +291,7 @@ def go_up():
                 per = i
                 hit_map[w][r] = ["s"]
     per[y] = ["H"]
+    print(hit_map)
     if x != 0:
         hit_map.insert(x - 1, per)
     else:
