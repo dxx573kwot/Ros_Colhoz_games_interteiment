@@ -4,6 +4,10 @@ import pygame
 import random
 from multiprocessing import Process, Queue
 
+from Map import Board
+from Player import Player
+from Round_and_bits import RoundAndBits
+
 
 class Musik_render(Process):
     def __init__(self, q, audio_data):
@@ -27,6 +31,17 @@ def get_click(pos):
         return True
     else:
         return False
+
+
+def get_main(pos):
+    if 132 >= pos[1] >= 39:
+        return "лёгкий"
+    elif 286 >= pos[1] >= 238:
+        return "средний"
+    elif 438 >= pos[1] >= 393:
+        return "тяжёлый"
+    else:
+        return "ERROR"
 
 
 def draw_titri(screen, color):
@@ -169,65 +184,65 @@ def loading(screen, rotaite):
     screen.blit(rot, rot_rect)
 
 
-def test_level(beat_frames):
-    tr, tic, toc = 0, 0, 0
-    bits_in_minute = 60.0
-    er = 1
-    pygame.mixer.music.play()
-    rady = True
-    for i in beat_frames:
-        # print(i, "секунда")
-        time.sleep(i - tr - (toc - tic))
-        tic = time.perf_counter()
-        # основной код начинается
-        render()
-        print(1)
-        pygame.display.flip()
-        # основной код заканчивается
-        toc = time.perf_counter()
-        tr = i
+# def test_level(beat_frames):
+#    tr, tic, toc = 0, 0, 0
+#    bits_in_minute = 60.0
+#    er = 1
+#    pygame.mixer.music.play()
+#    rady = True
+#    for i in beat_frames:
+#        # print(i, "секунда")
+#        time.sleep(i - tr - (toc - tic))
+#        tic = time.perf_counter()
+#        # основной код начинается
+#        render()
+#        print(1)
+#        pygame.display.flip()
+#        # основной код заканчивается
+#        toc = time.perf_counter()
+#        tr = i
 
 
-def render():
-    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
-    screen.fill((0, 0, 0))
-    for w, y in enumerate(hit_map):
-        for r, x in enumerate(y):
-            if "H" in x:
-                try:
-                    dog_surf = pygame.image.load(
-                        random.choice(wall_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                    dog_surf = pygame.image.load(
-                        random.choice(hero_texture))
-                    rot_rect = dog_surf.get_rect(
-                        bottomright=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                except IndexError:
-                    continue
-                except FileNotFoundError:
-                    dog_surf = pygame.image.load(
-                        random.choice(invalid_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-            if "s" in x:
-                try:
-                    dog_surf = pygame.image.load(
-                        random.choice(wall_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
-                except IndexError:
-                    continue
-                except FileNotFoundError:
-                    dog_surf = pygame.image.load(
-                        random.choice(invalid_texture))
-                    rot_rect = dog_surf.get_rect(
-                        center=point_map[w][r])
-                    screen.blit(dog_surf, rot_rect)
+# def render():
+#    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
+#    screen.fill((0, 0, 0))
+# for w, y in enumerate(hit_map):
+#    for r, x in enumerate(y):
+#        if "H" in x:
+#            try:
+#                dog_surf = pygame.image.load(
+#                    random.choice(wall_texture))
+#                rot_rect = dog_surf.get_rect(
+#                    center=point_map[w][r])
+#                screen.blit(dog_surf, rot_rect)
+#                dog_surf = pygame.image.load(
+#                    random.choice(hero_texture))
+#                rot_rect = dog_surf.get_rect(
+#                    bottomright=point_map[w][r])
+#                screen.blit(dog_surf, rot_rect)
+#            except IndexError:
+#                continue
+#            except FileNotFoundError:
+#                dog_surf = pygame.image.load(
+#                    random.choice(invalid_texture))
+#                rot_rect = dog_surf.get_rect(
+#                    center=point_map[w][r])
+#                screen.blit(dog_surf, rot_rect)
+#        if "s" in x:
+#            try:
+#                dog_surf = pygame.image.load(
+#                    random.choice(wall_texture))
+#                rot_rect = dog_surf.get_rect(
+#                    center=point_map[w][r])
+#                screen.blit(dog_surf, rot_rect)
+#            except IndexError:
+#                continue
+#            except FileNotFoundError:
+#                dog_surf = pygame.image.load(
+#                    random.choice(invalid_texture))
+#                rot_rect = dog_surf.get_rect(
+#                    center=point_map[w][r])
+#                screen.blit(dog_surf, rot_rect)
 
 
 def musik_render(audio_data):
@@ -305,6 +320,7 @@ if __name__ == '__main__':
     main2 = True
     first = True
     main = True
+    main1 = True
     game = False
     cutschen = True
     schena = True
@@ -327,6 +343,10 @@ if __name__ == '__main__':
     rady1 = False
     rady2 = False
     rady3 = False
+    seting = False
+    light = False
+    medium = False
+    hard = False
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
     invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
@@ -359,6 +379,9 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     print(rady1, rady2, rady3)
+    rady1 = True
+    rady2 = True
+    rady3 = True
     pygame.mixer.music.load(audio_data_main)
     pygame.mixer.music.play(-1)
     point_map = [
@@ -381,8 +404,16 @@ if __name__ == '__main__':
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
-    size = width, height = 1280, 640
+
+    size = width, height = 1250, 600  # было 1280, 640
     fullscreen = False
+
+    WIDTH, HEIGHT, CELL_SIZE = 25, 12, 50
+    board = Board(WIDTH, HEIGHT)
+    hero = Player(3, 3, WIDTH, HEIGHT)
+    rab = RoundAndBits(board, hero)
+    rab.set_view(0, 0, 50)
+
     if fullscreen:
         screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     else:
@@ -569,7 +600,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 draw_lkm(screen, main2)
-            else:
+            elif main1:
                 # меню
                 main2 = False
                 sun_surf = pygame.image.load('Textur/main.jpg')
@@ -580,11 +611,33 @@ if __name__ == '__main__':
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if get_click(event.pos):
+                            main1 = False
+                            # game = True
+            else:
+                sun_surf = pygame.image.load('Textur/load.png')
+                sun_rect = sun_surf.get_rect()
+                screen.blit(sun_surf, sun_rect)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        fgh = get_main(event.pos)
+                        if fgh == "лёгкий":
+                            light = True
                             main = False
                             game = True
-
+                        elif fgh == "средний":
+                            medium = True
+                            main = False
+                            game = True
+                        elif fgh == "тяжёлый":
+                            hard = True
+                            main = False
+                            game = True
+                        elif fgh == "ERROR":
+                            print("снайперская рота ждёт тебя")
             pygame.display.flip()
-        elif game:
+        elif game:  # НАЧАЛО ИГРЫ
             if first:
                 pygame.mixer.music.load(audio_data_Sacrifice)
                 pygame.mixer.music.play()
@@ -593,15 +646,45 @@ if __name__ == '__main__':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    up = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        up = False
+                        down = False
+                        left = False
+                        right = True
+                    if event.key == pygame.K_DOWN:
+                        up = False
+                        down = True
+                        left = False
+                        right = False
+                    if event.key == pygame.K_UP:
+                        up = True
+                        down = False
+                        left = False
+                        right = False
+                    if event.key == pygame.K_LEFT:
+                        up = False
+                        down = False
+                        left = True
+                        right = False
             if toc > render_audio_Sacrifice[a]:
                 if up:
                     up = False
-                    go_up()
+                    hero.move("up")
+                elif down:
+                    down = False
+                    hero.move("down")
+                elif right:
+                    right = False
+                    hero.move("right")
+                elif left:
+                    left = False
+                    hero.move("left")
                 print("Bit!")
-                render()
+                # render()
                 a += 1
             toc = time.perf_counter() - tic
+            screen.fill((0, 0, 0))
+            rab.render(screen)
             pygame.display.flip()
             clock.tick(60)
