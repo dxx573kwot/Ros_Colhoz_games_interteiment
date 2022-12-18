@@ -1,18 +1,30 @@
 import random
-
 import pygame
 
 
-class Board:
-    def __init__(self, width, height):
+pygame.init()
+SIZE = WIDTH, HEIGHT = 1250, 800
+CELL_SIZE = 50
+screen = pygame.display.set_mode(SIZE)
+all_sprites = pygame.sprite.Group()
+map = pygame.sprite.Group()
+
+
+class Board(pygame.sprite.Sprite):
+    def __init__(self, width, height, cell_size):
+        super().__init__(all_sprites)
+        self.add(map)
         self.width = width
         self.height = height
-        self.left = 10
-        self.top = 10
-        self.cell_size = 30
-        if self.__class__.__name__ == "Board":
-            self.board = [[random.choice(["Textur/CUMmen.jpg", "Textur/CUMmen_gold.jpg", "Textur/CUMmen_Iron.jpg"])
+        self.cell_size = cell_size
+        self.left = 0
+        self.top = 0
+        # Оставил нулевые отступы на случай, если мы потом решим их добавить
+        self.board = [[random.choice(["Textur/CUMmen.jpg", "Textur/CUMmen_gold.jpg", "Textur/CUMmen_Iron.jpg"])
                            for _ in range(width)] for _ in range(height)]
+        self.image = pygame.transform.scale(pygame.Surface([0, 0]), (WIDTH, HEIGHT))
+        self.render(self.image)
+        self.rect = self.image.get_rect()
 
     def render(self, screen):
         for i in range(self.height):
@@ -26,30 +38,15 @@ class Board:
                             self.top + i * self.cell_size + (self.cell_size / 2)))
                 screen.blit(dog_surf, rot_rect)
 
-    def get_cell(self, mouse_pos):
-        x, y = mouse_pos
-        if self.left <= x <= self.left + self.width * self.cell_size and \
-                self.top <= y <= self.top + self.height * self.cell_size:
-            return (x - self.left) // self.cell_size, (y - self.top) // self.cell_size
-        return None
-
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
-
 
 if __name__ == "__main__":
-    pygame.init()
-    size = width, height = 1250, 600
-    screen = pygame.display.set_mode(size)
-    board = Board(25, 12)
-    board.set_view(0, 0, 50)
+    board = Board(25, 16, CELL_SIZE)
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         screen.fill((0, 0, 0))
-        board.render(screen)
+        all_sprites.update()
+        all_sprites.draw(screen)
         pygame.display.flip()

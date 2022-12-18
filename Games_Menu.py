@@ -1,12 +1,72 @@
+import random
 import time
 import librosa.display
 import pygame
-import random
 from multiprocessing import Process, Queue
+from loadimage import load_image
 
-from Map import Board
-from Player import Player
-from Round_and_bits import RoundAndBits
+
+class Board(pygame.sprite.Sprite):
+    def __init__(self, width, height, cell_size):
+        super().__init__(all_sprites)
+        self.add(map)
+        self.width = width
+        self.height = height
+        self.cell_size = cell_size
+        self.left = 0
+        self.top = 0
+        # Оставил нулевые отступы на случай, если мы потом решим их добавить
+        self.board = [[random.choice(["Textur/CUMmen.jpg", "Textur/CUMmen_gold.jpg", "Textur/CUMmen_Iron.jpg"])
+                       for _ in range(width)] for _ in range(height)]
+        self.image = pygame.transform.scale(pygame.Surface([0, 0]), (WIDTH, HEIGHT))
+        self.render(self.image)
+        self.rect = self.image.get_rect()
+
+    def render(self, screen):  # Генерация карты
+        for i in range(self.height):
+            for j in range(self.width):
+                pygame.draw.rect(screen, "white", (
+                    self.left + j * self.cell_size, i * self.cell_size + self.top, self.cell_size, self.cell_size), 1)
+                dog_surf = pygame.transform.scale(pygame.image.load(self.board[i][j]),
+                                                  (self.cell_size - 1, self.cell_size - 1))
+                rot_rect = dog_surf.get_rect(
+                    center=(self.left + j * self.cell_size + (self.cell_size / 2),
+                            self.top + i * self.cell_size + (self.cell_size / 2)))
+                screen.blit(dog_surf, rot_rect)
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, cell_size):
+        super().__init__(all_sprites)
+        self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
+                                            (cell_size, cell_size))
+        self.cell_size = cell_size
+        self.rect = self.image.get_rect()
+        self.rect.x = x * cell_size
+        self.rect.y = y * cell_size
+
+    def update(self, *args):
+        self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
+                                            (CELL_SIZE, CELL_SIZE))
+        start_pos = self.rect.copy()
+        print(args)
+        for i in args[0]:
+            if i.type == pygame.KEYDOWN:
+                if i.key == pygame.K_RIGHT:
+                    self.rect = self.rect.move(self.cell_size, 0)
+                    break
+                elif i.key == pygame.K_DOWN:
+                    self.rect = self.rect.move(0, self.cell_size)
+                    break
+                elif i.key == pygame.K_UP:
+                    self.rect = self.rect.move(0, -self.cell_size)
+                    break
+                elif i.key == pygame.K_LEFT:
+                    self.rect = self.rect.move(-self.cell_size, 0)
+                    break
+        # break нужен, чтобы игрок не ходил по диагонали
+        if not pygame.sprite.spritecollideany(self, map):   # Проверка на выход за пределы поля
+            self.rect = start_pos
 
 
 class Musik_render(Process):
@@ -37,8 +97,8 @@ def draw_titri(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
 
 
@@ -46,13 +106,13 @@ def draw_titri_v_nachale_igri(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("модные титры", True, (255, 255, 255))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("в начале игры", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2 + 50
-    text_y = height // 2 - text.get_height() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
 
@@ -60,8 +120,8 @@ def draw_creator_oleg(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
 
 
@@ -69,13 +129,13 @@ def draw_news(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("от создателя олега", True, (255, 255, 255))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("чёт давно никаких новостей", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2 + 50
-    text_y = height // 2 - text.get_height() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
 
@@ -83,8 +143,8 @@ def draw_balli(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
 
 
@@ -92,13 +152,13 @@ def draw_drugie_igri(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("более 90 баллов", True, (255, 255, 255))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("есть у других проектов", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2 + 50
-    text_y = height // 2 - text.get_height() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
 
@@ -106,8 +166,8 @@ def draw_rehizer(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
 
 
@@ -115,13 +175,13 @@ def draw_ne_nuhen(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("режисёр", True, (255, 255, 255))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("здесь вообще не нужен", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2 + 50
-    text_y = height // 2 - text.get_height() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
 
@@ -129,8 +189,8 @@ def draw_name(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
 
 
@@ -138,13 +198,13 @@ def draw_creator(screen, color):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 50)
     text = font.render("Round and bits", True, (255, 255, 255))
-    text_x = width // 2 - text.get_width() // 2
-    text_y = height // 2 - text.get_height() // 2
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("от Ros Colhoz Games intertaimont", True, (color, color, color))
-    text_x = width // 2 - text.get_width() // 2 + 50
-    text_y = height // 2 - text.get_height() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
 
@@ -171,67 +231,6 @@ def loading(screen, rotaite):
     rot_rect = rot.get_rect(
         center=(1200, 580))
     screen.blit(rot, rot_rect)
-
-
-#def test_level(beat_frames):
-#    tr, tic, toc = 0, 0, 0
-#    bits_in_minute = 60.0
-#    er = 1
-#    pygame.mixer.music.play()
-#    rady = True
-#    for i in beat_frames:
-#        # print(i, "секунда")
-#        time.sleep(i - tr - (toc - tic))
-#        tic = time.perf_counter()
-#        # основной код начинается
-#        render()
-#        print(1)
-#        pygame.display.flip()
-#        # основной код заканчивается
-#        toc = time.perf_counter()
-#        tr = i
-
-
-#def render():
-#    global hit_map, wall_texture, invalid_texture, hero_texture, point_map
-#    screen.fill((0, 0, 0))
-    #for w, y in enumerate(hit_map):
-    #    for r, x in enumerate(y):
-    #        if "H" in x:
-    #            try:
-    #                dog_surf = pygame.image.load(
-    #                    random.choice(wall_texture))
-    #                rot_rect = dog_surf.get_rect(
-    #                    center=point_map[w][r])
-    #                screen.blit(dog_surf, rot_rect)
-    #                dog_surf = pygame.image.load(
-    #                    random.choice(hero_texture))
-    #                rot_rect = dog_surf.get_rect(
-    #                    bottomright=point_map[w][r])
-    #                screen.blit(dog_surf, rot_rect)
-    #            except IndexError:
-    #                continue
-    #            except FileNotFoundError:
-    #                dog_surf = pygame.image.load(
-    #                    random.choice(invalid_texture))
-    #                rot_rect = dog_surf.get_rect(
-    #                    center=point_map[w][r])
-    #                screen.blit(dog_surf, rot_rect)
-    #        if "s" in x:
-    #            try:
-    #                dog_surf = pygame.image.load(
-    #                    random.choice(wall_texture))
-    #                rot_rect = dog_surf.get_rect(
-    #                    center=point_map[w][r])
-    #                screen.blit(dog_surf, rot_rect)
-    #            except IndexError:
-    #                continue
-    #            except FileNotFoundError:
-    #                dog_surf = pygame.image.load(
-    #                    random.choice(invalid_texture))
-    #                rot_rect = dog_surf.get_rect(
-    #                    center=point_map[w][r])
-    #                screen.blit(dog_surf, rot_rect)
 
 
 def musik_render(audio_data):
@@ -280,26 +279,6 @@ def musik_render_The_Jounrey_Home(audio_data, q):
     print("Рендер " + audio_data + " окончен")
     print()
     q.put([beat_frames, True])
-
-
-def go_up():
-    global hit_map
-    x = 0
-    y = 0
-    per = []
-    for w, i in enumerate(hit_map):
-        for r, c in enumerate(i):
-            if c == ["H"]:
-                x = w
-                y = r
-                per = i
-                hit_map[w][r] = ["s"]
-    per[y] = ["H"]
-    print(hit_map)
-    if x != 0:
-        hit_map.insert(x - 1, per)
-    else:
-        hit_map.insert(0, per)
 
 
 if __name__ == '__main__':
@@ -386,23 +365,26 @@ if __name__ == '__main__':
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
 
-    size = width, height = 1250, 600  # было 1280, 640
     fullscreen = False
 
-    WIDTH, HEIGHT, CELL_SIZE = 25, 12, 50
-    board = Board(WIDTH, HEIGHT)
-    hero = Player(3, 3, WIDTH, HEIGHT)
-    rab = RoundAndBits(board, hero)
-    rab.set_view(0, 0, 50)
+    pygame.init()
+    SIZE = WIDTH, HEIGHT = 1250, 800
+    CELL_SIZE = 50
+    screen = pygame.display.set_mode(SIZE)
+    all_sprites = pygame.sprite.Group()
+    map = pygame.sprite.Group()
+    board = Board(25, 16, CELL_SIZE)
+    player = Player(3, 3, CELL_SIZE)
 
     if fullscreen:
-        screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+        screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
     else:
-        screen = pygame.display.set_mode(size)
+        screen = pygame.display.set_mode(SIZE)
     while run:
+        events = pygame.event.get()
         if main:
             if cutschen == False and (rady1 == False or rady2 == False or rady3 == False):
-                for event in pygame.event.get():
+                for event in events:
                     if event.type == pygame.QUIT:
                         run = False
                 loading(screen, roteit)
@@ -410,7 +392,7 @@ if __name__ == '__main__':
                 pygame.display.flip()
             elif cutschen:
                 if schena:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -428,7 +410,7 @@ if __name__ == '__main__':
                     time.sleep(0.01)
                     pygame.display.flip()
                 elif schena0:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -445,7 +427,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena1:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -462,7 +444,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena2:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -479,7 +461,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena3:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -496,7 +478,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena4:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -513,7 +495,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena5:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -530,7 +512,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena6:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -547,7 +529,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena7:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -564,7 +546,7 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 elif schena8:
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -587,7 +569,7 @@ if __name__ == '__main__':
                 sun_surf = pygame.image.load('Textur/main.jpg')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
-                for event in pygame.event.get():
+                for event in events:
                     if event.type == pygame.QUIT:
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -602,27 +584,15 @@ if __name__ == '__main__':
                 pygame.mixer.music.play()
                 first = False
                 tic = time.perf_counter()
-            for event in pygame.event.get():
+            for event in events:
                 if event.type == pygame.QUIT:
                     run = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
-                        hero.move("right")
-                    if event.key == pygame.K_DOWN:
-                        hero.move("down")
-                    if event.key == pygame.K_UP:
-                        hero.move("up")
-                    if event.key == pygame.K_LEFT:
-                        hero.move("left")
             if toc > render_audio_Sacrifice[a]:
-                if up:
-                    up = False
-                    go_up()
                 print("Bit!")
-                #render()
                 a += 1
             toc = time.perf_counter() - tic
             screen.fill((0, 0, 0))
-            rab.render(screen)
+            all_sprites.update(events)
+            all_sprites.draw(screen)
             pygame.display.flip()
             clock.tick(60)
