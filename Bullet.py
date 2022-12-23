@@ -34,7 +34,7 @@ class Bullet(pygame.sprite.Sprite):
         self.speed_x, self.speed_y = CELL_SIZE * round(math.cos(math.radians(diretions[diretion]))), \
                                      CELL_SIZE * round(-math.sin(math.radians(diretions[diretion])))
 
-    def update(self):
+    def update(self, *args):
         self.rect = self.rect.move(self.speed_x, self.speed_y)
         if not pygame.sprite.spritecollideany(self, self.map):
             self.kill()

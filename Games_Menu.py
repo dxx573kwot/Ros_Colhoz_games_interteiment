@@ -4,6 +4,7 @@ import pygame
 from multiprocessing import Process, Queue
 from Map import Board
 from Player import Player
+from Bullet import Bullet, diretions
 
 
 class Musik_render(Process):
@@ -329,8 +330,11 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(SIZE)
     all_sprites = pygame.sprite.Group()
     map = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
     board = Board(25, 16, CELL_SIZE, map, all_sprites)
     player = Player(3, 3, CELL_SIZE, map, all_sprites)
+    for i in diretions.keys():
+        Bullet(map, 12, 8, i, all_sprites, bullets)
     move = False  # Изначально персонаж не двигается
 
     if fullscreen:
