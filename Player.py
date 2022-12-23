@@ -1,68 +1,60 @@
 import random
 import pygame
+from loadimage import load_image
 from Map import Board
 
+pygame.init()
+SIZE = WIDTH, HEIGHT = 1250, 800
+CELL_SIZE = 50
+all_sprites = pygame.sprite.Group()
+map = pygame.sprite.Group()
 
-class Player(Board):
-    def __init__(self, x, y, width_board, height_board):
-        super().__init__(width_board, height_board)
-        self.x = x
-        self.y = y
 
-    def get_coords(self):
-        return self.x, self.y
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, cell_size, map, *group):
+        super().__init__(*group)
+        self.map = map
+        self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
+                                            (cell_size, cell_size))
+        self.cell_size = cell_size
+        self.rect = self.image.get_rect()
+        self.rect.x = x * cell_size
+        self.rect.y = y * cell_size
 
-    def set_coords(self, x, y):
-        self.x = x
-        self.y = y
-
-    def move(self, direction):
-        x, y = self.get_coords()
-        if direction == "up":
-            self.set_coords(x, y - 1)
-        elif direction == "down":
-            self.set_coords(x, y + 1)
-        elif direction == "left":
-            self.set_coords(x - 1, y)
-        elif direction == "right":
-            self.set_coords(x + 1, y)
-        x_new, y_new = self.get_coords()
-        if x_new < 0 or x_new > self.width - 1 or y_new < 0 or y_new > self.height - 1:
-            self.set_coords(x, y)
-
-    def render(self, screen):
-        dog_surf = pygame.transform.scale(
-            pygame.image.load(random.choice(['Textur/hero1.png', 'Textur/hero2.png', 'Textur/hero3.png'])),
-            (self.cell_size - 1, self.cell_size - 1))
-        rot_rect = dog_surf.get_rect(
-            center=(self.left + self.x * self.cell_size + (self.cell_size / 2),
-                    self.top + self.y * self.cell_size + (self.cell_size / 2)))
-        screen.blit(dog_surf, rot_rect)
+    def update(self, *args):
+        self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
+                                            (CELL_SIZE, CELL_SIZE))
+        start_pos = self.rect.copy()  # Проверка на выход за пределы поля
+        for i in args:
+            if i and i.type == pygame.KEYDOWN:
+                if i.key == pygame.K_RIGHT:
+                    self.rect = self.rect.move(self.cell_size, 0)
+                    break
+                elif i.key == pygame.K_DOWN:
+                    self.rect = self.rect.move(0, self.cell_size)
+                    break
+                elif i.key == pygame.K_UP:
+                    self.rect = self.rect.move(0, -self.cell_size)
+                    break
+                elif i.key == pygame.K_LEFT:
+                    self.rect = self.rect.move(-self.cell_size, 0)
+                    break
+        # break нужен, чтобы игрок не ходил по диагонали
+        if not pygame.sprite.spritecollideany(self, self.map):
+            self.rect = start_pos
 
 
 if __name__ == "__main__":
-    pygame.init()
-    size = width, height = 1250, 800
-    screen = pygame.display.set_mode(size)
-    board = Board(25, 16)
-    board.set_view(0, 0, 50)
-    hero = Player(3, 3, 25, 16)
-    hero.set_view(0, 0, 50)
+    screen = pygame.display.set_mode(SIZE)
+    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    player = Player(3, 3, CELL_SIZE, map, all_sprites)
     running = True
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    hero.move("right")
-                if event.key == pygame.K_DOWN:
-                    hero.move("down")
-                if event.key == pygame.K_UP:
-                    hero.move("up")
-                if event.key == pygame.K_LEFT:
-                    hero.move("left")
         screen.fill((0, 0, 0))
-        board.render(screen)
-        hero.render(screen)
+        all_sprites.update(False, *events)
+        all_sprites.draw(screen)
         pygame.display.flip()
