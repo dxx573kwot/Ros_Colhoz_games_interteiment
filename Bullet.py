@@ -34,7 +34,11 @@ class Bullet(pygame.sprite.Sprite):  # Вводится карта, коорди
         self.speed_x, self.speed_y = CELL_SIZE * round(math.cos(math.radians(directions[direction]))), \
                                      CELL_SIZE * round(-math.sin(math.radians(directions[direction])))
 
+    def get_shot_warning(self):
+        return self.shot_warning
+
     def update(self, *args):
+        self.shot_warning -= 1
         if self.shot_warning > 0:
             self.warning()
         elif not self.shot_warning:
@@ -43,7 +47,6 @@ class Bullet(pygame.sprite.Sprite):  # Вводится карта, коорди
             self.rect = self.rect.move(self.speed_x, self.speed_y)
             if not pygame.sprite.spritecollideany(self, self.map):
                 self.kill()
-        self.shot_warning -= 1
 
     def shoot(self):
         self.image = pygame.transform.scale(

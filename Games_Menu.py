@@ -4,7 +4,7 @@ import pygame
 from multiprocessing import Process, Queue
 from Map import Board
 from Player import Player
-from Bullet import Bullet
+from Boss import Boss
 
 
 class Musik_render(Process):
@@ -330,14 +330,12 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(SIZE)
     all_sprites = pygame.sprite.Group()
     map = pygame.sprite.Group()
+    boss_group = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     board = Board(25, 16, CELL_SIZE, map, all_sprites)
-    player = Player(3, 3, CELL_SIZE, map, all_sprites)
-    for i in range(16):
-        Bullet(map, 24, i, 6, "west", all_sprites, bullets)
-    for i in range(25):
-        Bullet(map, i, 15, i, "north", all_sprites, bullets)
-    move = False  # Изначально персонаж не двигается
+    boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
+    player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites)
+    player_move = False  # Изначально персонаж не двигается
 
     if fullscreen:
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
@@ -574,12 +572,13 @@ if __name__ == '__main__':
                     run = False
                 if event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
-                        move = event
+                        player_move = event
             if toc > render_audio_Sacrifice[a]:
-                all_sprites.update(move, *events)
-                print(f"Кнопка {move}")
+                all_sprites.update(player_move, *events)
+                player.change_hp(bullets)
+                print(f"Кнопка {player_move}")
                 print("Bit!")
-                move = False  # Изначально персонаж не двигается
+                player_move = False  # Изначально персонаж не двигается
                 a += 1
             toc = time.perf_counter() - tic
             screen.fill((0, 0, 0))
