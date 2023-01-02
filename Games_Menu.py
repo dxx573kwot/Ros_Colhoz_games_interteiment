@@ -230,6 +230,26 @@ def musik_render_The_Jounrey_Home(audio_data, q):
     q.put([beat_frames, True])
 
 
+def sniper(cor):
+    dog_surf = pygame.image.load(
+        'Textur/popal.png')
+    rot_rect = dog_surf.get_rect(
+        center=cor)
+    screen.blit(dog_surf, rot_rect)
+    font = pygame.font.Font(None, 20)
+    text = font.render("снайперская рота ждёт тебя", True, (color, color, color))
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = 600
+    screen.blit(text, (text_x, text_y))
+    pygame.display.flip()
+    pygame.mixer.music.load("Musik/piu.wav")
+    pygame.mixer.music.play()
+    time.sleep(1)
+    pygame.mixer.music.load("Musik/reload.wav")
+    pygame.mixer.music.play()
+    time.sleep(3)
+
+
 if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
@@ -558,6 +578,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "ERROR":
+                            sniper(event.pos)
                             print("снайперская рота ждёт тебя")
             pygame.display.flip()
         elif game:  # НАЧАЛО ИГРЫ
