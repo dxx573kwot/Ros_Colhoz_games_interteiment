@@ -33,7 +33,7 @@ class Boss(pygame.sprite.Sprite):
     def update(self, *args):
         if self.kast_chance >= random.random() or self.kast_chance >= 1:
             for _ in range(random.randint(self.min_number_bullet, self.max_number_bullet)):
-                Bullet(self.bullet_group[0], random.randrange(0, WIDTH // CELL_SIZE), random.randrange(0, HEIGHT // CELL_SIZE),
+                Bullet(self.bullet_group[0], random.randrange(0, WIDTH // CELL_SIZE), random.randrange(0, HEIGHT // CELL_SIZE - 2),
                        random.randint(self.min_delay, self.max_delay), random.choice([i for i in directions.keys()]),
                        self.bullet_group[1], self.bullet_group[2])
 

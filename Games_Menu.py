@@ -2,6 +2,8 @@ import time
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue
+
+from Hotbar import Hotbar
 from Map import Board
 from Player import Player
 from Boss import Boss
@@ -347,15 +349,21 @@ if __name__ == '__main__':
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
     CELL_SIZE = 50
+    FPS = 60
     screen = pygame.display.set_mode(SIZE)
+
     all_sprites = pygame.sprite.Group()
     map = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
-    board = Board(25, 16, CELL_SIZE, map, all_sprites)
+    hotbar_elements = pygame.sprite.Group()
+
+    board = Board(25, 14, CELL_SIZE, map, all_sprites)
     boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites)
+    hotbar = Hotbar((hotbar_elements, ), (all_sprites, ), all_sprites)
     player_move = False  # Изначально персонаж не двигается
+    music_start = True
 
     if fullscreen:
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
@@ -584,10 +592,9 @@ if __name__ == '__main__':
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
             if first:
-                pygame.mixer.music.load(audio_data_Sacrifice)
-                pygame.mixer.music.play()
                 first = False
-                tic = time.perf_counter()
+                tic = time.perf_counter()   # Время до начала игры
+            toc = time.perf_counter() - tic
             for event in events:
                 if event.type == pygame.QUIT:
                     run = False
@@ -595,14 +602,22 @@ if __name__ == '__main__':
                     if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
                         player_move = event
             if toc > render_audio_Sacrifice[a]:
+                hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                a += 1
+            if toc > 3.31 and music_start:  # Музыка начинается после 3.31 секунды(время прохождения элементом хотбара)
+                pygame.mixer.music.load(audio_data_Sacrifice)
+                pygame.mixer.music.play()
+                music_start = False
+            if pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True):
+                # Ход делается, если элемент достиг хотбара
                 all_sprites.update(player_move, *events)
                 player.change_hp(bullets)
                 print(f"Кнопка {player_move}")
-                print("Bit!")
-                player_move = False  # Изначально персонаж не двигается
-                a += 1
-            toc = time.perf_counter() - tic
+                print(f"Bit! {toc - 3.31}")
+                player_move = False
+            hotbar_elements.update()
             screen.fill((0, 0, 0))
             all_sprites.draw(screen)
+            hotbar_elements.draw(screen)
             pygame.display.flip()
-            clock.tick(60)
+            clock.tick(FPS)
