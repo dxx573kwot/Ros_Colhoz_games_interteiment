@@ -20,7 +20,7 @@ class Board(pygame.sprite.Sprite):
         # Оставил нулевые отступы на случай, если мы потом решим их добавить
         self.board = [[random.choice(["Textur/CUMmen.jpg", "Textur/CUMmen_gold.jpg", "Textur/CUMmen_Iron.jpg"])
                        for _ in range(width)] for _ in range(height)]
-        self.image = pygame.transform.scale(pygame.Surface([0, 0]), (WIDTH, HEIGHT))
+        self.image = pygame.transform.scale(pygame.Surface([0, 0]), (self.width * self.cell_size, self.height * self.cell_size))
         self.render(self.image)
         self.rect = self.image.get_rect()
 
