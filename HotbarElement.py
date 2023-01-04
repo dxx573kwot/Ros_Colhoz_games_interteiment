@@ -17,9 +17,16 @@ class HotbarElement(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.condition = 0  # Элемент не дошёл до сердца - 0, в пределах сердца - 1.
 
     def update(self, *args):
         self.rect = self.rect.move(250 / FPS, 0)
+
+    def change_condition(self):
+        self.condition += 1
+
+    def get_condition(self):
+        return self.condition
 
 
 if __name__ == "__main__":

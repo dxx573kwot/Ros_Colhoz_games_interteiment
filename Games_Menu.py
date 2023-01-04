@@ -593,6 +593,7 @@ if __name__ == '__main__':
             events = pygame.event.get()
             if first:
                 first = False
+                pygame.mixer.stop()
                 tic = time.perf_counter()   # Время до начала игры
             toc = time.perf_counter() - tic
             for event in events:
@@ -601,23 +602,42 @@ if __name__ == '__main__':
                 if event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
                         player_move = event
+
             if toc > render_audio_Sacrifice[a]:
                 hotbar.create_hotbar_element()  # Создание элементов в хотбаре
                 a += 1
-            if toc > 3.31 and music_start:  # Музыка начинается после 3.31 секунды(время прохождения элементом хотбара)
+            if toc > 3.35 and music_start:  # Музыка начинается после 3.31 секунды(время прохождения элементом хотбара)
                 pygame.mixer.music.load(audio_data_Sacrifice)
                 pygame.mixer.music.play()
                 music_start = False
-            if pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True):
-                # Ход делается, если элемент достиг хотбара
+            for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                i.change_condition()
+
+            if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and player_move:
+                # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
                 all_sprites.update(player_move, *events)
-                player.change_hp(bullets)
-                print(f"Кнопка {player_move}")
-                print(f"Bit! {toc - 3.31}")
-                player_move = False
+                player.change_hp(bullets=bullets)
+            elif [i for i in hotbar_elements.sprites() if not (i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False)) and i.get_condition()]:
+                # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                for i in hotbar_elements.sprites():
+                    if i.get_condition():
+                        i.kill()
+                all_sprites.update(*events)
+                player.change_hp(bullets=bullets, early_or_latter_input=True)
+            elif player_move:
+                # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                player.change_hp(early_or_latter_input=True)
+
             hotbar_elements.update()
             screen.fill((0, 0, 0))
+            player.render()
             all_sprites.draw(screen)
             hotbar_elements.draw(screen)
+
+            if player.get_hp() < 1:
+                break
+
             pygame.display.flip()
             clock.tick(FPS)
+            player_move = False
