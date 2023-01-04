@@ -344,7 +344,7 @@ if __name__ == '__main__':
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
 
-    fullscreen = False
+    fullscreen = True
 
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
