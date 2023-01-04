@@ -19,16 +19,16 @@ class Player(pygame.sprite.Sprite):
         self.map = gr[0]
         self.boss = gr[1]
         self.cell_size = cell_size
-        self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
-                                            (self.cell_size, self.cell_size))
+        self.hp = 100
+        self.render()
         self.rect = self.image.get_rect()
         self.rect.x = x * cell_size
         self.rect.y = y * cell_size
+        self.pos = self.rect
         self.mask = pygame.mask.from_surface(self.image)
-        self.hp = 101
 
     def update(self, *args):
-        self.start_pos = self.rect.copy()  # Проверка на выход за пределы поля
+        self.pos = self.rect  # Проверка на выход за пределы поля
         for i in args:
             if i and i.type == pygame.KEYDOWN:
                 if i.key == pygame.K_RIGHT:
@@ -45,19 +45,24 @@ class Player(pygame.sprite.Sprite):
                     break
         # break нужен, чтобы игрок не ходил по диагонали
         if not pygame.sprite.spritecollideany(self, self.map) or pygame.sprite.collide_mask(self, self.boss):
-            self.rect = self.start_pos
+            self.rect = self.pos
 
-    def change_hp(self, bullets):
-        if self.rect == self.start_pos:
+    def change_hp(self, bullets=[], early_or_latter_input=False):
+        if early_or_latter_input or self.rect == self.pos:
             self.hp -= 1
         for i in bullets:
             if pygame.sprite.collide_mask(self, i) and i.get_shot_warning() < 1:
                 i.kill()
                 self.hp -= 10
+
+    def render(self):
         self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
-                                            (self.cell_size, self.cell_size))
+                                         (self.cell_size, self.cell_size))
         self.image.blit(pygame.font.Font(None, 20).render(f"{self.hp}",
                                                           True, (255, 0, 0)), (CELL_SIZE * 0.4, CELL_SIZE * 0.3))
+
+    def get_hp(self):
+        return self.hp
 
 
 if __name__ == "__main__":
@@ -75,6 +80,7 @@ if __name__ == "__main__":
         screen.fill((0, 0, 0))
         all_sprites.update(*events)
         player.change_hp(bullets)
+        player.render()
         all_sprites.draw(screen)
         pygame.display.flip()
-        clock.tick(2)
+        clock.tick(1)

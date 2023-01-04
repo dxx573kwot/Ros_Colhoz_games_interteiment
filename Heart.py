@@ -12,10 +12,10 @@ map = pygame.sprite.Group()
 class Heart(pygame.sprite.Sprite):
     def __init__(self, *group):
         super().__init__(*group)
-        self.image = pygame.transform.scale(load_image("heart.png"), (140, 140))
+        self.image = pygame.transform.scale(load_image("heart.png"), (110, 90))
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH * 0.1 + 850
-        self.rect.y = HEIGHT * 0.93 - 80
+        self.rect.y = HEIGHT * 0.93 - 36
 
 
 if __name__ == "__main__":
