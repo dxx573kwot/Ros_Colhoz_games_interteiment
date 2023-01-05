@@ -2,6 +2,7 @@ import time
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue
+import random
 
 from Hotbar import Hotbar
 from Map import Board
@@ -252,6 +253,45 @@ def sniper(cor):
     time.sleep(3)
 
 
+def game_over(text, restart_text):
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font(None, 50)
+    text = font.render(text, True, (255, 0, 0))
+    text_x = WIDTH // 2 - text.get_width() // 2
+    text_y = HEIGHT // 2 - text.get_height() // 2
+    screen.blit(text, (text_x, text_y))
+    restart(restart_text)
+    quit()
+
+
+def restart(text):
+    font = pygame.font.Font(None, 50)
+    text = font.render(text, True, (255, 0, 0))  # random.choice(["пострадать ещё раз!", "хочу ещё!"])
+    text_x = 850
+    text_y = 730
+    screen.blit(text, (text_x, text_y))
+
+
+def quit():
+    font = pygame.font.Font(None, 50)
+    text = font.render("выйти", True, (255, 0, 0))
+    text_x = 50
+    text_y = 730
+    screen.blit(text, (text_x, text_y))
+
+
+def tap_restart(pos):
+    if 1215 > pos[0] > 843 and 764 > pos[1] > 734:
+        return True
+    return False
+
+
+def tap_quit(pos):
+    if 163 > pos[0] > 48 and 767 > pos[1] > 728:
+        return True
+    return False
+
+
 if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
@@ -286,6 +326,11 @@ if __name__ == '__main__':
     light = False
     medium = False
     hard = False
+    life = True
+    text = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
+    restart_text = ["пострадать ещё раз!", "хочу ещё!"]
+    text_over = random.choice(text)
+    text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
     invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
@@ -344,7 +389,7 @@ if __name__ == '__main__':
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
                [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
 
-    fullscreen = True
+    fullscreen = False
 
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
@@ -361,7 +406,7 @@ if __name__ == '__main__':
     board = Board(25, 14, CELL_SIZE, map, all_sprites)
     boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites)
-    hotbar = Hotbar((hotbar_elements, ), (all_sprites, ), all_sprites)
+    hotbar = Hotbar((hotbar_elements,), (all_sprites,), all_sprites)
     player_move = False  # Изначально персонаж не двигается
     music_start = True
 
@@ -594,8 +639,22 @@ if __name__ == '__main__':
             if first:
                 first = False
                 pygame.mixer.stop()
-                tic = time.perf_counter()   # Время до начала игры
+                tic = time.perf_counter()  # Время до начала игры
             toc = time.perf_counter() - tic
+            if not life:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = event.pos
+                        if tap_quit(pos):
+                            print("Выход")
+                        if tap_restart(pos):
+                            print("restart")
+                game_over(text_over, text_restart)
+                pygame.display.flip()
+                clock.tick(FPS)
+                continue
             for event in events:
                 if event.type == pygame.QUIT:
                     run = False
@@ -618,7 +677,9 @@ if __name__ == '__main__':
                 pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
                 all_sprites.update(player_move, *events)
                 player.change_hp(bullets=bullets)
-            elif [i for i in hotbar_elements.sprites() if not (i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False)) and i.get_condition()]:
+            elif [i for i in hotbar_elements.sprites() if not (
+                    i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                     False)) and i.get_condition()]:
                 # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
                 for i in hotbar_elements.sprites():
                     if i.get_condition():
@@ -636,7 +697,9 @@ if __name__ == '__main__':
             hotbar_elements.draw(screen)
 
             if player.get_hp() < 1:
-                break
+                text_over = random.choice(text)
+                text_restart = random.choice(restart_text)
+                life = False
 
             pygame.display.flip()
             clock.tick(FPS)

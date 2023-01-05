@@ -29,6 +29,18 @@ def quit():
     screen.blit(text, (text_x, text_y))
 
 
+def tap_restart(pos):
+    if 1215 > pos[0] > 843 and 764 > pos[1] > 734:
+        return True
+    return False
+
+
+def tap_quit(pos):
+    if 163 > pos[0] > 48 and 767 > pos[1] > 728:
+        return True
+    return False
+
+
 pygame.init()
 fullscreen = False
 run = True
@@ -47,7 +59,10 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            text_over = random.choice(text)
-            text_restart = random.choice(restart_text)
+            pos = event.pos
+            if tap_quit(pos):
+                print("Выход")
+            if tap_restart(pos):
+                print("restart")
     game_over(text_over, text_restart)
     pygame.display.flip()
