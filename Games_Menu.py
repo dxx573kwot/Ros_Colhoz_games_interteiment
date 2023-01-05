@@ -363,9 +363,6 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     print(rady1, rady2, rady3)
-    rady1 = True
-    rady2 = True
-    rady3 = True
     pygame.mixer.music.load(audio_data_main)
     pygame.mixer.music.play(-1)
     point_map = [
@@ -636,71 +633,76 @@ if __name__ == '__main__':
             pygame.display.flip()
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
-            if first:
-                first = False
-                pygame.mixer.stop()
-                tic = time.perf_counter()  # Время до начала игры
-            toc = time.perf_counter() - tic
-            if not life:
-                for event in pygame.event.get():
+            if light:
+                if first:
+                    first = False
+                    pygame.mixer.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                print("Выход")
+                            if tap_restart(pos):
+                                print("restart")
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
                     if event.type == pygame.QUIT:
                         run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pos = event.pos
-                        if tap_quit(pos):
-                            print("Выход")
-                        if tap_restart(pos):
-                            print("restart")
-                game_over(text_over, text_restart)
-                pygame.display.flip()
-                clock.tick(FPS)
-                continue
-            for event in events:
-                if event.type == pygame.QUIT:
-                    run = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
-                        player_move = event
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            player_move = event
 
-            if toc > render_audio_Sacrifice[a]:
-                hotbar.create_hotbar_element()  # Создание элементов в хотбаре
-                a += 1
-            if toc > 3.35 and music_start:  # Музыка начинается после 3.31 секунды(время прохождения элементом хотбара)
-                pygame.mixer.music.load(audio_data_Sacrifice)
-                pygame.mixer.music.play()
-                music_start = False
-            for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
-                i.change_condition()
+                if toc > render_audio_Sacrifice[a]:
+                    hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                    a += 1
+                if toc > 3.35 and music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_Sacrifice)
+                    pygame.mixer.music.play()
+                    music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
 
-            if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and player_move:
-                # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
-                pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
-                all_sprites.update(player_move, *events)
-                player.change_hp(bullets=bullets)
-            elif [i for i in hotbar_elements.sprites() if not (
-                    i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
-                                                     False)) and i.get_condition()]:
-                # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
-                for i in hotbar_elements.sprites():
-                    if i.get_condition():
-                        i.kill()
-                all_sprites.update(*events)
-                player.change_hp(bullets=bullets, early_or_latter_input=True)
-            elif player_move:
-                # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
-                player.change_hp(early_or_latter_input=True)
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(player_move, *events)
+                    player.change_hp(bullets=bullets)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    player.change_hp(bullets=bullets, early_or_latter_input=True)
+                elif player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(early_or_latter_input=True)
 
-            hotbar_elements.update()
-            screen.fill((0, 0, 0))
-            player.render()
-            all_sprites.draw(screen)
-            hotbar_elements.draw(screen)
+                hotbar_elements.update()
+                screen.fill((0, 0, 0))
+                player.render()
+                all_sprites.draw(screen)
+                hotbar_elements.draw(screen)
 
-            if player.get_hp() < 1:
-                text_over = random.choice(text)
-                text_restart = random.choice(restart_text)
-                life = False
-
+                if player.get_hp() < 1:
+                    text_over = random.choice(text)
+                    text_restart = random.choice(restart_text)
+                    life = False
+            elif medium:
+                pass
+            elif hard:
+                pass
             pygame.display.flip()
             clock.tick(FPS)
             player_move = False
