@@ -15,6 +15,5 @@ if __name__ == '__main__':
     q1 = Queue()
     p = CustomProcess(q1)
     p.start()
-    p.join()
     print(q1.get())
     print(q1.get()) # prints "[42, None, 'hello']"
