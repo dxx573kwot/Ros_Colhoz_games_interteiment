@@ -202,7 +202,7 @@ def musik_render_Sacrifice(audio_data, q):
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
-    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time",
                                                  trim=True)
     print("Рендер " + audio_data + " окончен")
     print()
@@ -343,6 +343,7 @@ if __name__ == '__main__':
     run = True
     main2 = True
     first = True
+    first2 = True
     main = True
     main1 = True
     game = False
@@ -686,13 +687,18 @@ if __name__ == '__main__':
                     tic = time.perf_counter()  # Время до начала игры
                 toc = time.perf_counter() - tic
                 if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
                     for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             pos = event.pos
                             if tap_quit(pos):
-                                print("Выход")
+                                run = False
                             if tap_restart(pos):
                                 print("restart")
                     game_over(text_over, text_restart)
