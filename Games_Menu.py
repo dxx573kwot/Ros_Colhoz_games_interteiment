@@ -132,7 +132,7 @@ def draw_ne_nuhen(screen, color):
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("здесь вообще не нужен", True, (color, color, color))
-    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 100
     text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
@@ -164,7 +164,7 @@ def draw_lkm(screen, i):
     if i:
         font = pygame.font.Font(None, 20)
         text = font.render("нажмите лкм для пропуска", True, (255, 255, 255))
-        text_x = 1100
+        text_x = 1000
         text_y = 600
         screen.blit(text, (text_x, text_y))
 
@@ -202,7 +202,7 @@ def musik_render_Sacrifice(audio_data, q):
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
-    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+    tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time",
                                                  trim=True)
     print("Рендер " + audio_data + " окончен")
     print()
@@ -343,6 +343,7 @@ if __name__ == '__main__':
     run = True
     main2 = True
     first = True
+    first2 = True
     main = True
     main1 = True
     game = False
@@ -386,7 +387,7 @@ if __name__ == '__main__':
     toc = 0
     tic = 0
     audio_data_main = 'Musik/main.wav'
-    audio_data_Sacrifice = 'Musik/Sacrifice.wav'
+    audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
@@ -408,8 +409,6 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     print(rady1, rady2, rady3)
-    pygame.mixer.music.load(audio_data_main)
-    pygame.mixer.music.play(-1)
     point_map = [
         [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
         [(54, 182), (182, 182), (310, 182), (438, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
@@ -459,6 +458,8 @@ if __name__ == '__main__':
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
     else:
         screen = pygame.display.set_mode(SIZE)
+    pygame.mixer.music.load(audio_data_main)
+    pygame.mixer.music.play(-1)
     while run:
         if main:
             if cutschen == False and (rady1 == False or rady2 == False or rady3 == False):
@@ -688,13 +689,18 @@ if __name__ == '__main__':
                     tic = time.perf_counter()  # Время до начала игры
                 toc = time.perf_counter() - tic
                 if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
                     for event in events:
                         if event.type == pygame.QUIT:
                             run = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             pos = event.pos
                             if tap_quit(pos):
-                                print("Выход")
+                                run = False
                             if tap_restart(pos):
                                 print("restart")
                     game_over(text_over, text_restart)
