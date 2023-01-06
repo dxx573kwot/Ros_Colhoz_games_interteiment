@@ -3,6 +3,8 @@ import pygame
 from loadimage import load_image
 from Map import Board
 from Boss import Boss
+from Fracture import Fracture
+from Screen_redness import ScreenRedness
 
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1250, 800
@@ -11,6 +13,8 @@ all_sprites = pygame.sprite.Group()
 map = pygame.sprite.Group()
 boss_group = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+fractures = pygame.sprite.Group()
+redness = pygame.sprite.Group()
 
 
 class Player(pygame.sprite.Sprite):
@@ -47,13 +51,16 @@ class Player(pygame.sprite.Sprite):
         if not pygame.sprite.spritecollideany(self, self.map) or pygame.sprite.collide_mask(self, self.boss):
             self.rect = self.pos
 
-    def change_hp(self, bullets=[], early_or_latter_input=False):
+    def change_hp(self, fracture_groups=[], redness_groups=[], bullets=[], early_or_latter_input=False):
         if early_or_latter_input or self.rect == self.pos:
+            ScreenRedness(redness_groups)
             self.hp -= 1
         for i in bullets:
             if pygame.sprite.collide_mask(self, i) and i.get_shot_warning() < 1:
                 i.kill()
                 self.hp -= 10
+                pygame.mixer.Sound("Sounds/broken_glass.mp3").play()
+                Fracture((self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2), fracture_groups)
 
     def render(self):
         self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
@@ -79,8 +86,12 @@ if __name__ == "__main__":
                 running = False
         screen.fill((0, 0, 0))
         all_sprites.update(*events)
-        player.change_hp(bullets)
+        player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets)
         player.render()
+        fractures.update()
+        redness.update()
         all_sprites.draw(screen)
+        fractures.draw(screen)
+        redness.draw(screen)
         pygame.display.flip()
         clock.tick(1)
