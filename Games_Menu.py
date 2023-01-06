@@ -388,7 +388,7 @@ if __name__ == '__main__':
     toc = 0
     tic = 0
     audio_data_main = 'Musik/main.wav'
-    audio_data_Sacrifice = 'Musik/Sacrifice.wav'
+    audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
