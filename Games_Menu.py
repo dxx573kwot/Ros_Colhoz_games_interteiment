@@ -132,7 +132,7 @@ def draw_ne_nuhen(screen, color):
     screen.blit(text, (text_x, text_y))
     font = pygame.font.Font(None, 30)
     text = font.render("здесь вообще не нужен", True, (color, color, color))
-    text_x = WIDTH // 2 - text.get_width() // 2 + 50
+    text_x = WIDTH // 2 - text.get_width() // 2 + 100
     text_y = HEIGHT // 2 - text.get_height() // 2 + 50
     screen.blit(text, (text_x, text_y))
 
@@ -164,7 +164,7 @@ def draw_lkm(screen, i):
     if i:
         font = pygame.font.Font(None, 20)
         text = font.render("нажмите лкм для пропуска", True, (255, 255, 255))
-        text_x = 1100
+        text_x = 1000
         text_y = 600
         screen.blit(text, (text_x, text_y))
 
@@ -366,6 +366,7 @@ if __name__ == '__main__':
     right = False
     rady1 = False
     rady2 = False
+    rady2 = False
     rady3 = False
     seting = False
     light = False
@@ -408,8 +409,6 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     print(rady1, rady2, rady3)
-    pygame.mixer.music.load(audio_data_main)
-    pygame.mixer.music.play(-1)
     point_map = [
         [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
         [(54, 182), (182, 182), (310, 182), (438, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
@@ -456,6 +455,8 @@ if __name__ == '__main__':
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
     else:
         screen = pygame.display.set_mode(SIZE)
+    pygame.mixer.music.load(audio_data_main)
+    pygame.mixer.music.play(-1)
     while run:
         if main:
             if cutschen == False and (rady1 == False or rady2 == False or rady3 == False):
