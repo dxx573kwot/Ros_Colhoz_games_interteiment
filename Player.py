@@ -54,6 +54,7 @@ class Player(pygame.sprite.Sprite):
     def change_hp(self, fracture_groups=[], redness_groups=[], bullets=[], early_or_latter_input=False):
         if early_or_latter_input or self.rect == self.pos:
             ScreenRedness(redness_groups)
+            pygame.mixer.Sound(f"Sounds/{random.choice(['downed_rhythm1.mp3', 'downed_rhythm2.mp3'])}").play()
             self.hp -= 1
         for i in bullets:
             if pygame.sprite.collide_mask(self, i) and i.get_shot_warning() < 1:
