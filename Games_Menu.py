@@ -367,7 +367,6 @@ if __name__ == '__main__':
     right = False
     rady1 = False
     rady2 = False
-    rady2 = False
     rady3 = False
     seting = False
     light = False
