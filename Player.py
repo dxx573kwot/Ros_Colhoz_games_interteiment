@@ -72,6 +72,9 @@ class Player(pygame.sprite.Sprite):
     def get_hp(self):
         return self.hp
 
+    def cheat_hp(self):
+        self.hp += 10000
+
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)

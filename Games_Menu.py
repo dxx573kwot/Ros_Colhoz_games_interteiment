@@ -1044,10 +1044,16 @@ if __name__ == '__main__':
                     if event.type == pygame.KEYDOWN:
                         if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
                             player_move = event
-
-                if toc > render_audio_Sacrifice[a]:
-                    hotbar.create_hotbar_element()  # Создание элементов в хотбаре
-                    a += 1
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_Sacrifice[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    main1 = True
+                    game = False
+                    continue
                 if toc > 3.35 and music_start:  # Музыка начинается после 3.31 секунды
                     # (время прохождения элементом хотбара)
                     pygame.mixer.music.load(audio_data_Sacrifice)
