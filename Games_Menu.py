@@ -337,12 +337,26 @@ def fullscren_dialog():
         pygame.display.flip()
 
 
+def get_final(pos):
+    if 261 > pos[0] > 53 and 124 > pos[1] > 96:
+        return True
+    return False
+
+
 if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
     run = True
-    main2 = True
+    run2 = True
     first = True
+    part1 = True
+    part2 = False
+    part3 = False
+    part4 = False
+    part5 = False
+    part6 = False
+    part7 = False
+    main2 = True
     first2 = True
     main = True
     main1 = True
@@ -373,6 +387,8 @@ if __name__ == '__main__':
     medium = False
     hard = False
     life = True
+    chaet_menu = False
+    final = False
     text = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
     text_over = random.choice(text)
@@ -380,12 +396,16 @@ if __name__ == '__main__':
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
     invalid_texture = ["Textur/error1.png"]  # Textur/error1.png or Textur/error2.png
+    tap = ['Musik/keybord/tap1.wav', 'Musik/keybord/tap2.wav', 'Musik/keybord/tap3.wav', 'Musik/keybord/tap4.wav']
+    space = ['Musik/keybord/space.wav', 'Musik/keybord/space2.wav']
     color = 0
     roteit = 0
     a = 0
     i = 0.1
     toc = 0
     tic = 0
+    b = 0
+    c = 0
     audio_data_main = 'Musik/main.wav'
     audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
@@ -408,6 +428,7 @@ if __name__ == '__main__':
     rady1 = a1[1]
     rady2 = a2[1]
     rady3 = a3[1]
+    a2 = ""
     print(rady1, rady2, rady3)
     point_map = [
         [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
@@ -642,6 +663,313 @@ if __name__ == '__main__':
                     color += 1
                     time.sleep(0.01)
                 draw_lkm(screen, main2)
+            elif final:
+                while run2:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run2 = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pass
+                    screen.fill((0, 0, 0))
+                    if part1:
+                        font = pygame.font.Font(None, 35)
+                        text = font.render("Загадочная личность 1:", True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 580
+                        screen.blit(text, (text_x, text_y))
+                        font = pygame.font.Font(None, 30)
+                        if b >= len("Почему какай то шарик укланяется от пуль?"):
+                            part1 = False
+                            part2 = True
+                            time.sleep(2)
+                            continue
+                        a2 += "Почему какай-то шарик укланяется от пуль?"[b]
+                        text = font.render(a2, True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 625
+                        screen.blit(text, (text_x, text_y))
+                        if "Почему какай-то шарик укланяется от пуль?"[b] != " ":
+                            pygame.mixer.music.load(random.choice(tap))
+                        else:
+                            pygame.mixer.music.load(random.choice(space))
+                        pygame.mixer.music.play()
+                        time.sleep(0.125)
+                        b += 1
+                    if part2:
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        font = pygame.font.Font(None, 35)
+                        text = font.render("Загадочная личность 1:", True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 580
+                        screen.blit(text, (text_x, text_y))
+                        font = pygame.font.Font(None, 30)
+                        if b >= len("И почему это всё происходит под музыку?"):
+                            part2 = False
+                            part3 = True
+                            first2 = True
+                            time.sleep(2)
+                            continue
+                        a2 += "И почему это всё происходит под музыку?"[b]
+                        text = font.render(a2, True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 625
+                        screen.blit(text, (text_x, text_y))
+                        if "И почему это всё происходит под музыку?"[b] != " ":
+                            pygame.mixer.music.load(random.choice(tap))
+                        else:
+                            pygame.mixer.music.load(random.choice(space))
+                        pygame.mixer.music.play()
+                        time.sleep(0.125)
+                        b += 1
+                    if part3:
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        font = pygame.font.Font(None, 35)
+                        text = font.render("Загадочная личность 2:", True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 580
+                        screen.blit(text, (text_x, text_y))
+                        font = pygame.font.Font(None, 30)
+                        if b >= len("Я не знаю, может мы получим ответ в продолжении?"):
+                            part3 = False
+                            part4 = True
+                            first2 = True
+                            time.sleep(2)
+                            continue
+                        a2 += "Я не знаю, может мы получим ответ в продолжении?"[b]
+                        text = font.render(a2, True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 625
+                        screen.blit(text, (text_x, text_y))
+                        if "Я не знаю, может мы получим ответ в продолжении?"[b] != " ":
+                            pygame.mixer.music.load(random.choice(tap))
+                        elif b == 9:
+                            pygame.mixer.music.load(random.choice(tap))
+                            c = 1
+                        else:
+                            pygame.mixer.music.load(random.choice(space))
+                        pygame.mixer.music.play()
+                        time.sleep(0.125 + c)
+                        c = 0
+                        b += 1
+                    if part4:
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(".", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(". .", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(". . .", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        if b != 0:
+                            part4 = False
+                            part5 = True
+                            first2 = True
+                            time.sleep(2)
+                            continue
+                        font = pygame.font.Font(None, 80)
+                        text = font.render("НЕТ!!!", True, (255, 0, 0))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.mixer.music.load('Musik/keybord/boom.mp3')
+                        pygame.mixer.music.play()
+                        pygame.display.flip()
+                        time.sleep(3)
+                        b += 1
+                    if part5:
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        font = pygame.font.Font(None, 35)
+                        text = font.render("Oбе загадочные личности:", True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 580
+                        screen.blit(text, (text_x, text_y))
+                        font = pygame.font.Font(None, 30)
+                        if b >= len("Но почему?"):
+                            part5 = False
+                            part6 = True
+                            first2 = True
+                            time.sleep(2)
+                            continue
+                        a2 += "Но почему?"[b]
+                        text = font.render(a2, True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 625
+                        screen.blit(text, (text_x, text_y))
+                        if "Но почему?"[b] != " ":
+                            pygame.mixer.music.load(random.choice(tap))
+                        else:
+                            pygame.mixer.music.load(random.choice(space))
+                        pygame.mixer.music.play()
+                        time.sleep(0.125)
+                        b += 1
+                    if part6:
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        font = pygame.font.Font(None, 35)
+                        text = font.render("Авторы:", True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 580
+                        screen.blit(text, (text_x, text_y))
+                        font = pygame.font.Font(None, 30)
+                        if b >= len("Потому-что..."):
+                            part6 = False
+                            part7 = True
+                            first2 = True
+                            time.sleep(2)
+                            continue
+                        a2 += "Потому-что..."[b]
+                        text = font.render(a2, True, (255, 255, 255))
+                        text_x = 60
+                        text_y = 625
+                        screen.blit(text, (text_x, text_y))
+                        if "Потому-что..."[b] != " ":
+                            pygame.mixer.music.load(random.choice(tap))
+                        else:
+                            pygame.mixer.music.load(random.choice(space))
+                        pygame.mixer.music.play()
+                        time.sleep(0.125)
+                        b += 1
+                    if part7:
+                        if first2:
+                            b = 0
+                            a2 = ""
+                            first2 = False
+                        if b != 0:
+                            part7 = False
+                            run2 = False
+                            final = False
+                            time.sleep(2)
+                            continue
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(".", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(". .", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 35)
+                        text = font.render(". . .", True, (255, 255, 255))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.display.flip()
+                        time.sleep(1)
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                run = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                pass
+                        screen.fill((0, 0, 0))
+                        font = pygame.font.Font(None, 80)
+                        text = font.render("ПРОДОЛЖЕНИЯ НЕ БУДЕТ!!", True, (255, 0, 0))
+                        text_x = WIDTH // 2 - text.get_width() // 2
+                        text_y = HEIGHT // 2 - text.get_height() // 2
+                        screen.blit(text, (text_x, text_y))
+                        pygame.mixer.music.load('Musik/keybord/boom.mp3')
+                        pygame.mixer.music.play()
+                        pygame.display.flip()
+                        time.sleep(3)
+                        b += 1
+                    pygame.display.flip()
+
+            elif chaet_menu:
+                screen.fill((0, 0, 0))
+                font = pygame.font.Font(None, 35)
+                text = font.render("Чит меню", True, (255, 255, 255))
+                text_x = 60
+                text_y = 60
+                screen.blit(text, (text_x, text_y))
+                font = pygame.font.Font(None, 35)
+                text = font.render("Показать финал", True, (255, 255, 255))
+                text_x = 60
+                text_y = 100
+                screen.blit(text, (text_x, text_y))
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if get_final(event.pos):
+                            final = True
+                pygame.display.flip()
             elif main1:
                 # меню
                 main2 = False
@@ -654,6 +982,9 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if get_click(event.pos):
                             main1 = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == 1105:
+                            chaet_menu = True
                             # game = True
             else:
                 sun_surf = pygame.image.load('Textur/load.png')
@@ -730,7 +1061,8 @@ if __name__ == '__main__':
                     # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
                     pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
                     all_sprites.update(player_move, *events)
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets, early_or_latter_input=False)
+                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                                     early_or_latter_input=False)
                 elif [i for i in hotbar_elements.sprites() if not (
                         i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
                                                          False)) and i.get_condition()]:
@@ -739,10 +1071,12 @@ if __name__ == '__main__':
                         if i.get_condition():
                             i.kill()
                     all_sprites.update(*events)
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets, early_or_latter_input=True)
+                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                                     early_or_latter_input=True)
                 elif player_move:
                     # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets, early_or_latter_input=True)
+                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                                     early_or_latter_input=True)
 
                 hotbar_elements.update()
                 fractures.update()

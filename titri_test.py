@@ -4,7 +4,7 @@ import random
 import pygame
 
 pygame.init()
-run = True
+run2 = True
 first = True
 part1 = True
 part2 = False
@@ -20,10 +20,10 @@ SIZE = WIDTH, HEIGHT = 1250, 800
 tap = ['Musik/keybord/tap1.wav', 'Musik/keybord/tap2.wav', 'Musik/keybord/tap3.wav', 'Musik/keybord/tap4.wav']
 space = ['Musik/keybord/space.wav', 'Musik/keybord/space2.wav']
 screen = pygame.display.set_mode(SIZE)
-while run:
+while run2:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
+            run2 = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
     screen.fill((0, 0, 0))
@@ -215,7 +215,7 @@ while run:
             a = ""
             first = False
         font = pygame.font.Font(None, 35)
-        text = font.render("Автор:", True, (255, 255, 255))
+        text = font.render("Авторы:", True, (255, 255, 255))
         text_x = 60
         text_y = 580
         screen.blit(text, (text_x, text_y))
@@ -245,7 +245,7 @@ while run:
             first = False
         if b != 0:
             part7 = False
-            first = True
+            run2 = False
             time.sleep(2)
             continue
         time.sleep(1)
