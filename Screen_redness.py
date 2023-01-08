@@ -7,9 +7,8 @@ all_sprites = pygame.sprite.Group()
 
 
 class ScreenRedness(pygame.sprite.Sprite):
-    def __init__(self, group):
-        for i in group.sprites():
-            i.kill()
+    def __init__(self, group: pygame.sprite.Group):
+        group.empty()
         super().__init__(group)
         self.image = pygame.transform.scale(load_image("red_screen.png"), (width, height))
         self.rect = self.image.get_rect()

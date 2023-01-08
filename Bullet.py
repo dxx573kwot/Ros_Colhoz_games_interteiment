@@ -22,8 +22,8 @@ map = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 
-class Bullet(pygame.sprite.Sprite):  # Вводится карта, координаты, шаги до выстрела, направление и группа спрайтов.
-    def __init__(self, map, x=None, y=None, shot_warning=0, direction="east", *groups):
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, map: pygame.sprite.Sprite, x: int, y: int, shot_warning: int, direction: str, *groups):
         super().__init__(*groups)
         self.shot_warning = shot_warning
         self.direction = direction

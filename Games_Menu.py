@@ -8,6 +8,7 @@ from Hotbar import Hotbar
 from Map import Board
 from Player import Player
 from Boss import Boss
+from Fracture import Fracture
 
 
 class Musik_render(Process):
@@ -469,9 +470,10 @@ if __name__ == '__main__':
     redness = pygame.sprite.Group()
 
     board = Board(25, 14, CELL_SIZE, map, all_sprites)
-    boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
+    boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
     hotbar = Hotbar((hotbar_elements,), (all_sprites,), all_sprites)
+    fr = Fracture(fractures)
     player_move = False  # Изначально персонаж не двигается
     music_start = True
 
@@ -1061,7 +1063,8 @@ if __name__ == '__main__':
                     # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
                     pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
                     all_sprites.update(player_move, *events)
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                    boss.attack()
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=False)
                 elif [i for i in hotbar_elements.sprites() if not (
                         i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
@@ -1071,16 +1074,18 @@ if __name__ == '__main__':
                         if i.get_condition():
                             i.kill()
                     all_sprites.update(*events)
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                    boss.attack()
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=True)
                 elif player_move:
                     # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
-                    player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets,
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=True)
 
                 hotbar_elements.update()
                 fractures.update()
                 redness.update()
+                boss.update()
                 player.render()
 
                 screen.fill((0, 0, 0))
