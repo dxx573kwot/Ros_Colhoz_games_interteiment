@@ -18,10 +18,10 @@ redness = pygame.sprite.Group()
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, cell_size, gr, *group):
+    def __init__(self, x: int, y: int, cell_size: int, groups: tuple, *group):
         super().__init__(*group)
-        self.map = gr[0]
-        self.boss = gr[1]
+        self.map = groups[0]
+        self.boss = groups[1]
         self.cell_size = cell_size
         self.hp = 100
         self.render()
@@ -51,17 +51,17 @@ class Player(pygame.sprite.Sprite):
         if not pygame.sprite.spritecollideany(self, self.map) or pygame.sprite.collide_mask(self, self.boss):
             self.rect = self.pos
 
-    def change_hp(self, fracture_groups=[], redness_groups=[], bullets=[], early_or_latter_input=False):
+    def change_hp(self, fracture, redness_groups=[], bullets=[], early_or_latter_input=False):
         if early_or_latter_input or self.rect == self.pos:
             ScreenRedness(redness_groups)
-            pygame.mixer.Sound(f"Sounds/{random.choice(['downed_rhythm1.mp3', 'downed_rhythm2.mp3'])}").play()
+            pygame.mixer.Sound("Sounds/downed_rhythm.mp3").play()
             self.hp -= 1
         for i in bullets:
             if pygame.sprite.collide_mask(self, i) and i.get_shot_warning() < 1:
                 i.kill()
                 self.hp -= 10
                 pygame.mixer.Sound("Sounds/broken_glass.mp3").play()
-                Fracture((self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2), fracture_groups)
+                fracture.create_fracture((self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2))
 
     def render(self):
         self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
@@ -81,6 +81,7 @@ if __name__ == "__main__":
     board = Board(25, 16, CELL_SIZE, all_sprites, map)
     boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites)
+    fr = Fracture(fractures)
     clock = pygame.time.Clock()
     running = True
     while running:
@@ -90,7 +91,7 @@ if __name__ == "__main__":
                 running = False
         screen.fill((0, 0, 0))
         all_sprites.update(*events)
-        player.change_hp(fracture_groups=fractures, redness_groups=redness, bullets=bullets)
+        player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets)
         player.render()
         fractures.update()
         redness.update()

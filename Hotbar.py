@@ -16,7 +16,7 @@ heart_group = pygame.sprite.Group()
 
 
 class Hotbar(pygame.sprite.Sprite):
-    def __init__(self, elements_group, heart_group, *group):
+    def __init__(self, elements_group: tuple, heart_group: tuple, *group):
         super().__init__(*group)
         self.elements_group = elements_group
         self.image = pygame.transform.scale(pygame.Surface([0, 0]), (900, 10))

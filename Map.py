@@ -10,7 +10,7 @@ map = pygame.sprite.Group()
 
 
 class Board(pygame.sprite.Sprite):
-    def __init__(self, width, height, cell_size, *group):
+    def __init__(self, width: int, height: int, cell_size: int, *group):
         super().__init__(*group)
         self.width = width
         self.height = height

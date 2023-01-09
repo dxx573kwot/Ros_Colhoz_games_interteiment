@@ -10,7 +10,7 @@ map = pygame.sprite.Group()
 
 
 class HotbarElement(pygame.sprite.Sprite):
-    def __init__(self, x, y, *group):
+    def __init__(self, x: int, y: int, *group):
         super().__init__(*group)
         self.image = pygame.transform.scale(pygame.Surface([0, 0]), (10, 50))
         pygame.draw.rect(self.image, "yellow", (0, 0, 4000, 1000))
