@@ -4,13 +4,14 @@ import pygame
 from multiprocessing import Process, Queue
 import random
 import matplotlib
-import pyautogui
 
 from Hotbar import Hotbar
 from Map import Board
 from Player import Player
 from Boss import Boss
 from Fracture import Fracture
+from Ros_Colhoz_games_interteiment.Textur.cv.cv1 import screenshot
+from loadimage import load_image
 
 
 class Musik_render(Process):
@@ -345,9 +346,38 @@ def get_final(pos):
         return True
     return False
 
+# Add by dxx573kwot
+
+
+def add_score(name, score):
+    f = open('score.txt', 'w')
+    f.write(name + "///" + str(score) + '\n')
+    f.close()
+
+
+def get_any_score():
+    f = open('score.txt', 'r')
+    score = {
+
+    }
+    for index in f.read().split("\n"):
+        score[index.split("///")[0]] = index.split("///")[1]
+    f.close()
+    return score
+
+
+def get_name_score(name):
+    try:
+        return get_any_score()[name]
+    except IndexError:
+        return "ERROR1"
+
 
 if __name__ == '__main__':
     pygame.init()
+
+    screenshot("Textur/cv/screenshot.png")
+
     print(matplotlib.get_data_path())
     clock = pygame.time.Clock()
     run = True
@@ -438,39 +468,21 @@ if __name__ == '__main__':
     rady3 = a3[1]
     a2 = ""
     print(rady1, rady2, rady3)
-    point_map = [
-        [(54, 54), (182, 54), (310, 54), (438, 54), (566, 54), (694, 54), (822, 54), (950, 54), (1078, 54), (1206, 54)],
-        [(54, 182), (182, 182), (310, 182), (438, 182), (566, 182), (694, 182), (822, 182), (950, 182), (1078, 182),
-         (1206, 182)],
-        [(54, 310), (182, 310), (310, 310), (438, 310), (566, 310), (694, 310), (822, 310), (950, 310), (1078, 310),
-         (1206, 310)],
-        [(54, 438), (182, 438), (310, 438), (438, 438), (566, 438), (694, 438), (822, 438), (950, 438), (1078, 438),
-         (1206, 438)],
-        [(54, 566), (182, 566), (310, 566), (438, 566), (566, 566), (694, 566), (822, 566), (950, 566), (1078, 566),
-         (1206, 566)]]
-    '''
-    коды объектов:
-    H - персонаж
-    s - задний фон
-    '''
-    hit_map = [[["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-               [["s"], ["s"], ["H"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]],
-               [["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"], ["s"]]]
-    pyautogui.screenshot('screenshot.png')
+
     fullscreen = fullscren_dialog()
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
     CELL_SIZE = 50
     FPS = 60
     screen = pygame.display.set_mode(SIZE)
+    secret_screen = pygame.transform.scale(load_image("cv/screenshot.png"), (CELL_SIZE * 25, CELL_SIZE * 14))
 
     all_sprites = pygame.sprite.Group()
     map = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
+    hotbars = pygame.sprite.Group()
     hotbar_elements = pygame.sprite.Group()
     fractures = pygame.sprite.Group()
     redness = pygame.sprite.Group()
@@ -478,10 +490,11 @@ if __name__ == '__main__':
     board = Board(25, 14, CELL_SIZE, map, all_sprites)
     boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
-    hotbar = Hotbar((hotbar_elements,), (all_sprites,), all_sprites)
-    fr = Fracture(fractures)
-    player_move = False  # Изначально персонаж не двигается
-    music_start = True
+    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+    fr = Fracture(board, fractures)
+    is_player_move = False  # Изначально персонаж не двигается
+    is_music_start = True
+
     if fullscreen:
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
     else:
@@ -1352,7 +1365,7 @@ if __name__ == '__main__':
                         run = False
                     if event.type == pygame.KEYDOWN:
                         if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
-                            player_move = event
+                            is_player_move = event
                         if event.key == 1073741911:
                             player.cheat_hp()
                 try:
@@ -1362,19 +1375,19 @@ if __name__ == '__main__':
                 except IndexError:
                     win = True
                     continue
-                if toc > 3.35 and music_start:  # Музыка начинается после 3.31 секунды
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
                     # (время прохождения элементом хотбара)
                     pygame.mixer.music.load(audio_data_Sacrifice)
                     time.sleep(0.1)
                     pygame.mixer.music.play()
-                    music_start = False
+                    is_music_start = False
                 for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
                     i.change_condition()
 
-                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and player_move:
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
                     # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
                     pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
-                    all_sprites.update(player_move, *events)
+                    all_sprites.update(is_player_move, *events)
                     boss.attack()
                     player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=False)
@@ -1389,7 +1402,7 @@ if __name__ == '__main__':
                     boss.attack()
                     player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=True)
-                elif player_move:
+                elif is_player_move:
                     # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
                     player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=True)
@@ -1401,8 +1414,11 @@ if __name__ == '__main__':
                 player.render()
 
                 screen.fill((0, 0, 0))
-                all_sprites.draw(screen)
+                hotbars.draw(screen)
                 fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
                 hotbar_elements.draw(screen)
                 bullets.draw(screen)
                 player_group.draw(screen)
@@ -1418,4 +1434,4 @@ if __name__ == '__main__':
                 pass
             pygame.display.flip()
             clock.tick(FPS)
-            player_move = False
+            is_player_move = False
