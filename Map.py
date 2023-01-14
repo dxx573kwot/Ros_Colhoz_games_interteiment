@@ -36,6 +36,9 @@ class Board(pygame.sprite.Sprite):
                             self.top + i * self.cell_size + (self.cell_size / 2)))
                 screen.blit(dog_surf, rot_rect)
 
+    def update(self, *args):
+        self.image = self.image.convert_alpha()
+
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
