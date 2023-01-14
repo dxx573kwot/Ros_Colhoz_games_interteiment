@@ -347,13 +347,13 @@ def get_final(pos):
 
 
 def add_score(name, score):
-    f = open('text.txt', 'w')
+    f = open('score.txt', 'w')
     f.write(name + "///" + str(score) + '\n')
     f.close()
 
 
 def get_any_score():
-    f = open('text.txt', 'r')
+    f = open('score.txt', 'r')
     score = {
 
     }
