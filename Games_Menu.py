@@ -346,6 +346,30 @@ def get_final(pos):
     return False
 
 
+def add_score(name, score):
+    f = open('text.txt', 'w')
+    f.write(name + "///" + str(score) + '\n')
+    f.close()
+
+
+def get_any_score():
+    f = open('text.txt', 'r')
+    score = {
+
+    }
+    for index in f.read().split("\n"):
+        score[index.split("///")[0]] = index.split("///")[1]
+    f.close()
+    return score
+
+
+def get_name_score(name):
+    try:
+        return get_any_score()[name]
+    except IndexError:
+        return "ERROR1"
+
+
 if __name__ == '__main__':
     pygame.init()
     print(matplotlib.get_data_path())
@@ -464,7 +488,6 @@ if __name__ == '__main__':
     SIZE = WIDTH, HEIGHT = 1250, 800
     CELL_SIZE = 50
     FPS = 60
-    screen = pygame.display.set_mode(SIZE)
 
     all_sprites = pygame.sprite.Group()
     map = pygame.sprite.Group()
