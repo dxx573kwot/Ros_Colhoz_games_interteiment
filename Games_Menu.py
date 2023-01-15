@@ -4,13 +4,14 @@ import pygame
 from multiprocessing import Process, Queue
 import random
 import matplotlib
+import pyautogui
+import keyboard
 
 from Hotbar import Hotbar
 from Map import Board
 from Player import Player
 from Boss import Boss
 from Fracture import Fracture
-from Ros_Colhoz_games_interteiment.Textur.cv.cv1 import screenshot
 from loadimage import load_image
 
 
@@ -346,6 +347,7 @@ def get_final(pos):
         return True
     return False
 
+
 # Add by dxx573kwot
 
 
@@ -371,6 +373,18 @@ def get_name_score(name):
         return get_any_score()[name]
     except IndexError:
         return "ERROR1"
+
+
+def screenshot(file):
+    keyboard.press("alt+tab")
+    time.sleep(0.1)
+    keyboard.press("left")
+    keyboard.release("left")
+    keyboard.press("left")
+    keyboard.release("left")
+    keyboard.release("alt+tab")
+    time.sleep(3)
+    pyautogui.screenshot(file)
 
 
 if __name__ == '__main__':
@@ -494,7 +508,6 @@ if __name__ == '__main__':
     fr = Fracture(board, fractures)
     is_player_move = False  # Изначально персонаж не двигается
     is_music_start = True
-
     if fullscreen:
         screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
     else:
