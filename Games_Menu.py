@@ -30,7 +30,7 @@ class Musik_render(Process):
         y_harmonic, y_percussive = librosa.effects.hpss(y)
         if bits_in_minute != -1:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
-                                                     trim=True)
+                                                         trim=True)
         else:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
         print("Рендер " + self.audio_data + " окончен")
@@ -353,6 +353,12 @@ def get_final(pos):
     return False
 
 
+def get_privat_musik(pos):
+    if 1203 > pos[0] > 1094 and 723 > pos[1] > 695:
+        return True
+    return False
+
+
 # Add by dxx573kwot
 
 
@@ -467,7 +473,7 @@ if __name__ == '__main__':
     audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     # audio_data_Sacrifice = 'Musik/test.wav'
-    audio_data_Sacrifice = 'Musik/test2.wav'
+    # audio_data_Sacrifice = 'Musik/test2.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
     q2 = Queue()
@@ -1027,6 +1033,12 @@ if __name__ == '__main__':
                             chaet_menu = True
                             # game = True
             else:
+                screen.fill((0, 0, 0))
+                font = pygame.font.Font(None, 30)
+                text = font.render("свой трек", True, (255, 255, 255))
+                text_x = 1100
+                text_y = 700
+                screen.blit(text, (text_x, text_y))
                 sun_surf = pygame.image.load('Textur/load.png')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
@@ -1035,7 +1047,10 @@ if __name__ == '__main__':
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
-                        if fgh == "лёгкий":
+                        if get_privat_musik(event.pos):
+                            pass
+                            # Кирилл, при нажатии свой трек всё идёт сюда
+                        elif fgh == "лёгкий":
                             light = True
                             main = False
                             game = True
