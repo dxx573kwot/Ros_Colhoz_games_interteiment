@@ -1,4 +1,5 @@
 import time
+import threading
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue
@@ -16,18 +17,22 @@ from loadimage import load_image
 
 
 class Musik_render(Process):
-    def __init__(self, q, audio_data):
+    def __init__(self, q, audio_data, bits_in_minute):
         Process.__init__(self)
         self.q = q
+        self.bits_in_minute = bits_in_minute
         self.audio_data = audio_data
 
     def run(self):
         print("Рендер " + self.audio_data + " начат")
-        bits_in_minute = 60.0
+        bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
-        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+        if bits_in_minute != -1:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                      trim=True)
+        else:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
         print("Рендер " + self.audio_data + " окончен")
         self.q.put([beat_frames, True])
 
@@ -461,13 +466,15 @@ if __name__ == '__main__':
     audio_data_main = 'Musik/main.wav'
     audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
+    # audio_data_Sacrifice = 'Musik/test.wav'
+    audio_data_Sacrifice = 'Musik/test2.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
     q2 = Queue()
     q3 = Queue()
-    p = Musik_render(q1, "Musik/Sacrifice.wav")
-    p2 = Musik_render(q2, "Musik/Forever_Mine.wav")
-    p3 = Musik_render(q3, "Musik/The_Jounrey_Home.wav")
+    p = Musik_render(q1, audio_data_Sacrifice, -1)
+    p2 = Musik_render(q2, audio_data_Forever_Mine, -1)
+    p3 = Musik_render(q3, audio_data_The_Jounrey_Home, -1)
     p.start()
     p2.start()
     p3.start()
@@ -1419,7 +1426,6 @@ if __name__ == '__main__':
                     # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
                     player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
                                      early_or_latter_input=True)
-
                 hotbar_elements.update()
                 fractures.update()
                 redness.update()
@@ -1430,6 +1436,7 @@ if __name__ == '__main__':
                 hotbars.draw(screen)
                 fractures.draw(screen)
                 screen.blit(secret_screen, (0, 0))
+
                 map.draw(screen)
                 boss_group.draw(screen)
                 hotbar_elements.draw(screen)
