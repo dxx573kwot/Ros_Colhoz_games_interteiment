@@ -249,7 +249,7 @@ def sniper(cor):
         center=cor)
     screen.blit(dog_surf, rot_rect)
     font = pygame.font.Font(None, 20)
-    text = font.render("снайперская рота ждёт тебя", True, (color, color, color))
+    text = font.render("снайперская рота ждёт тебя", True, (255, 255, 255))
     text_x = WIDTH // 2 - text.get_width() // 2
     text_y = 600
     screen.blit(text, (text_x, text_y))
@@ -487,9 +487,9 @@ if __name__ == '__main__':
     complite_medium = False
     complite_hard = False
     final2 = False
-    text = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
-    text_over = random.choice(text)
+    text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
@@ -1461,6 +1461,7 @@ if __name__ == '__main__':
                                 run = False
                             if tap_restart(pos):
                                 print("restart")
+                    print(text_over, text_restart)
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -1530,7 +1531,7 @@ if __name__ == '__main__':
                 redness.draw(screen)
 
                 if player.get_hp() < 1:
-                    text_over = random.choice(text)
+                    text_over = random.choice(text123)
                     text_restart = random.choice(restart_text)
                     life = False
             elif medium:
