@@ -432,12 +432,23 @@ def take_name(keybrd):
         pygame.display.flip()
 
 
+def who_boss_the_gym():
+    f = open('who_is_my_boss.txt', 'r')
+    a = f.read()
+    if a == "I":
+        f.close()
+        return True
+    f.close()
+    return False
+
+
 if __name__ == '__main__':
     pygame.init()
 
     screenshot("Textur/cv/screenshot.png")
 
     print(matplotlib.get_data_path())
+    I = who_boss_the_gym()
     clock = pygame.time.Clock()
     run = True
     run2 = True
@@ -1440,7 +1451,10 @@ if __name__ == '__main__':
                                 final2 = True
                     pygame.display.flip()
                     continue
-            if light:
+            if I:
+                # здесь должен быть бос вебка
+                pass
+            elif light:
                 if first:
                     first = False
                     pygame.mixer.music.stop()
@@ -1461,7 +1475,6 @@ if __name__ == '__main__':
                                 run = False
                             if tap_restart(pos):
                                 print("restart")
-                    print(text_over, text_restart)
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
