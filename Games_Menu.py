@@ -1,5 +1,4 @@
 import time
-import threading
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue
@@ -398,6 +397,41 @@ def screenshot(file):
     pyautogui.screenshot(file)
 
 
+def take_name(keybrd):
+    SIZE = WIDTH, HEIGHT = 1250, 800
+    screen = pygame.display.set_mode(SIZE)
+    run = True
+    a = ""
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                try:
+                    if keybrd[event.key] == "dell":
+                        if len(a) != 0:
+                            a = a[:-1]
+                    elif keybrd[event.key] == "continue":
+                        if len(a) != 0:
+                            return a
+                    else:
+                        a += keybrd[event.key]
+                except KeyError:
+                    continue
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 35)
+        text = font.render(a, True, (255, 255, 255))
+        text_x = WIDTH // 2 - text.get_width() // 2
+        text_y = HEIGHT // 2 - text.get_height() // 2
+        screen.blit(text, (text_x, text_y))
+        font = pygame.font.Font(None, 35)
+        text = font.render("Ваш никнейм", True, (255, 255, 255))
+        text_x = WIDTH // 2 - text.get_width() // 2
+        text_y = 100
+        screen.blit(text, (text_x, text_y))
+        pygame.display.flip()
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -452,6 +486,7 @@ if __name__ == '__main__':
     complite_light = False
     complite_medium = False
     complite_hard = False
+    final2 = False
     text = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
     text_over = random.choice(text)
@@ -474,6 +509,7 @@ if __name__ == '__main__':
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     # audio_data_Sacrifice = 'Musik/test.wav'
     # audio_data_Sacrifice = 'Musik/test2.wav'
+    # audio_data_Sacrifice = 'Musik/test3.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
     q2 = Queue()
@@ -494,8 +530,14 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     a2 = ""
+    keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
+              97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
+              120: 'x', 99: 'c', 118: 'v', 98: 'b', 110: 'n', 109: 'm', 49: '1', 50: '2', 51: '3', 52: '4', 53: '5',
+              54: '6', 55: '7', 56: '8', 57: '9', 48: "0", 8: "dell", 13: "continue"}
     print(rady1, rady2, rady3)
-
+    print("время запуска составило " + str(time.process_time()))
+    player_name = take_name(keybrd)
+    print("Привет " + player_name)
     fullscreen = fullscren_dialog()
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
@@ -1009,10 +1051,18 @@ if __name__ == '__main__':
                 text_x = 60
                 text_y = 100
                 screen.blit(text, (text_x, text_y))
+                font = pygame.font.Font(None, 50)
+                text = font.render("выйти", True, (255, 0, 0))
+                text_x = 50
+                text_y = 730
+                screen.blit(text, (text_x, text_y))
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        if tap_quit(event.pos):
+                            run = False
+                            continue
                         if get_final(event.pos):
                             final = True
                 pygame.display.flip()
@@ -1069,7 +1119,7 @@ if __name__ == '__main__':
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
             if win:
-                if complite_light and complite_medium and complite_hard:
+                if (complite_light and complite_medium and complite_hard) or final2:
                     while run2:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
@@ -1360,6 +1410,7 @@ if __name__ == '__main__':
                     game = False
                     main = True
                     main1 = True
+                    final2 = False
                     continue
                 else:
                     screen.fill((0, 0, 0))
@@ -1368,6 +1419,25 @@ if __name__ == '__main__':
                     text_x = WIDTH // 2 - text.get_width() // 2
                     text_y = HEIGHT // 2 - text.get_height() // 2
                     screen.blit(text, (text_x, text_y))
+                    font = pygame.font.Font(None, 35)
+                    text = font.render("Показать финал", True, (255, 255, 255))
+                    text_x = 60
+                    text_y = 100
+                    screen.blit(text, (text_x, text_y))
+                    font = pygame.font.Font(None, 50)
+                    text = font.render("выйти", True, (255, 0, 0))
+                    text_x = 50
+                    text_y = 730
+                    screen.blit(text, (text_x, text_y))
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            if tap_quit(event.pos):
+                                run = False
+                                continue
+                            if get_final(event.pos):
+                                final2 = True
                     pygame.display.flip()
                     continue
             if light:
