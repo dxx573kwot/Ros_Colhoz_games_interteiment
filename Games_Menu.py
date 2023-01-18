@@ -490,6 +490,8 @@ if __name__ == '__main__':
     light = False
     medium = False
     hard = False
+    secret_level1 = False
+    secret_level2 = False
     life = True
     chaet_menu = False
     final = False
@@ -519,8 +521,8 @@ if __name__ == '__main__':
     audio_data_Sacrifice = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     # audio_data_Sacrifice = 'Musik/test.wav'
-    # audio_data_Sacrifice = 'Musik/test2.wav'
-    # audio_data_Sacrifice = 'Musik/test3.wav'
+    audio_data_secret1 = 'Musik/test2.wav'
+    audio_data_secret2 = 'Musik/test3.wav'
     audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
     q1 = Queue()
     q2 = Queue()
@@ -540,11 +542,23 @@ if __name__ == '__main__':
     rady1 = a1[1]
     rady2 = a2[1]
     rady3 = a3[1]
+    q1 = Queue()
+    q2 = Queue()
+    p = Musik_render(q1, audio_data_secret1, 60)
+    p2 = Musik_render(q2, audio_data_secret2, 90)
+    p.start()
+    p2.start()
+    a1 = q1.get()
+    a2 = q2.get()
+    render_audio_secret1 = a1[0]
+    render_audio_secret2 = a2[0]
     a2 = ""
     keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
               97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
               120: 'x', 99: 'c', 118: 'v', 98: 'b', 110: 'n', 109: 'm', 49: '1', 50: '2', 51: '3', 52: '4', 53: '5',
               54: '6', 55: '7', 56: '8', 57: '9', 48: "0", 8: "dell", 13: "continue"}
+    numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
+    secret_cod = ""
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
     player_name = take_name(keybrd)
@@ -1101,6 +1115,10 @@ if __name__ == '__main__':
                 sun_surf = pygame.image.load('Textur/load.png')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
+                if secret_cod == "715":
+                    secret_level1 = True
+                    main = False
+                    game = True
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
@@ -1130,6 +1148,16 @@ if __name__ == '__main__':
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
+                    if event.type == pygame.KEYDOWN:
+                        try:
+                            if numpad[event.key] != 0:
+                                pass
+                        except KeyError:
+                            pygame.display.flip()
+                            continue
+                        if len(secret_cod) > 3:
+                            secret_cod = ""
+                        secret_cod += numpad[event.key]
             pygame.display.flip()
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
@@ -1457,6 +1485,8 @@ if __name__ == '__main__':
                     continue
             if I:
                 # здесь должен быть бос вебка
+                pass
+            elif secret_level1:
                 pass
             elif light:
                 if first:
