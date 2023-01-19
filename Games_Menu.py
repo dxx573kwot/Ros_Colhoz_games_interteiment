@@ -1748,9 +1748,30 @@ if __name__ == '__main__':
                             if tap_restart(pos):
                                 a = 0
                                 light = False
+                                is_music_start = True
                                 first2 = True
+                                first = True
                                 life = True
                                 main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
+
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
