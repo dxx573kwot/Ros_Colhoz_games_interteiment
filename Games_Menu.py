@@ -617,9 +617,6 @@ if __name__ == '__main__':
     fractures = pygame.sprite.Group()
     redness = pygame.sprite.Group()
 
-    board = Board(25, 14, CELL_SIZE, map, all_sprites)
-    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
-    fr = Fracture(board, fractures)
     is_player_move = False  # Изначально персонаж не двигается
     is_music_start = True
     if fullscreen:
@@ -1154,11 +1151,17 @@ if __name__ == '__main__':
                 if I:
                     boss = Boss((map, all_sprites, bullets), "zatik.png", 1, 1, 5, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                    board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                    fr = Fracture(board, fractures)
                     main = False
                     game = True
                 if secret_cod == "715":
                     boss = Boss((map, all_sprites, bullets), "oleg.png", 1, 1, 5, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                    board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                    fr = Fracture(board, fractures)
                     secret_level1 = True
                     main = False
                     game = True
@@ -1173,18 +1176,27 @@ if __name__ == '__main__':
                         elif fgh == "лёгкий":
                             boss = Boss((map, all_sprites, bullets), "boss1.jpg", 2, 1, 5, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             light = True
                             main = False
                             game = True
                         elif fgh == "средний":
                             boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             medium = True
                             main = False
                             game = True
                         elif fgh == "тяжёлый":
                             boss = Boss((map, all_sprites, bullets), "boss3.png", 1, 1, 5, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             hard = True
                             main = False
                             game = True
@@ -1734,7 +1746,11 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                light = False
+                                first2 = True
+                                life = True
+                                main = True
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
