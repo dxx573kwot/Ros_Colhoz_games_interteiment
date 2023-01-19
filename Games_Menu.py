@@ -521,7 +521,7 @@ if __name__ == '__main__':
     audio_data_Sacrifice = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     # audio_data_Sacrifice = 'Musik/test.wav'
-    audio_data_secret1 = 'Musik/test2.wav'
+    audio_data_secret1 = 'Musik/Riverside.wav'
     audio_data_secret2 = 'Musik/test3.wav'
     audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
     q1 = Queue()
