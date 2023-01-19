@@ -1560,7 +1560,31 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                I = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -1653,7 +1677,31 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                secret_level1 = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -1864,7 +1912,31 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                medium = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -1957,7 +2029,31 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                hard = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
