@@ -1201,7 +1201,7 @@ if __name__ == '__main__':
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
                 if I:
-                    boss = Boss("zatik.png", 1, 1, 20, all_sprites, boss_group)
+                    boss = Boss("zatik.png", 1, 1, 8, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1209,7 +1209,7 @@ if __name__ == '__main__':
                     main = False
                     game = True
                 if secret_cod == "715":
-                    boss = Boss("oleg.png", 1, 1, 20, all_sprites, boss_group)
+                    boss = Boss("exploooosion3.png", 10, 5, 7, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1223,7 +1223,7 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
                         if get_privat_musik(event.pos):
-                            boss = Boss("exploooosion2.png", 2, 2, 3, all_sprites, boss_group)
+                            boss = Boss("exploooosion2.png", 2, 2, 5, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1242,7 +1242,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "средний":
-                            boss = Boss("boss2.png", 4, 3, 7, all_sprites, boss_group)
+                            boss = Boss("boss2.png", 4, 3, 5, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1251,7 +1251,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "тяжёлый":
-                            boss = Boss("boss3.png", 1, 1, 10, all_sprites, boss_group)
+                            boss = Boss("boss3.png", 1, 1, 6, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1970,6 +1970,8 @@ if __name__ == '__main__':
                                     i.kill()
                                 for i in redness.sprites():
                                     i.kill()
+                                for i in rockets.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -2094,6 +2096,8 @@ if __name__ == '__main__':
                                     i.kill()
                                 for i in redness.sprites():
                                     i.kill()
+                                for i in rockets.sprites():
+                                    i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -2217,6 +2221,8 @@ if __name__ == '__main__':
                                 for i in fractures.sprites():
                                     i.kill()
                                 for i in redness.sprites():
+                                    i.kill()
+                                for i in rockets.sprites():
                                     i.kill()
                     game_over(text_over, text_restart)
                     pygame.display.flip()
