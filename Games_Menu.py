@@ -496,13 +496,14 @@ if __name__ == '__main__':
     boss_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
+    rockets = pygame.sprite.Group()
     hotbars = pygame.sprite.Group()
     hotbar_elements = pygame.sprite.Group()
     fractures = pygame.sprite.Group()
     redness = pygame.sprite.Group()
 
     board = Board(25, 14, CELL_SIZE, map, all_sprites)
-    boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
+    boss = Boss("boss2.png", 4, 3, 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
     fr = Fracture(board, fractures)
@@ -1376,6 +1377,7 @@ if __name__ == '__main__':
                 for event in events:
                     if event.type == pygame.QUIT:
                         run = False
+                        pygame.mixer.stop()
                     if event.type == pygame.KEYDOWN:
                         if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
                             is_player_move = event
@@ -1401,8 +1403,9 @@ if __name__ == '__main__':
                     # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
                     pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
                     all_sprites.update(is_player_move, *events)
-                    boss.attack()
-                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
                                      early_or_latter_input=False)
                 elif [i for i in hotbar_elements.sprites() if not (
                         i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
@@ -1412,12 +1415,13 @@ if __name__ == '__main__':
                         if i.get_condition():
                             i.kill()
                     all_sprites.update(*events)
-                    boss.attack()
-                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
                                      early_or_latter_input=True)
                 elif is_player_move:
                     # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
-                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets,
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
                                      early_or_latter_input=True)
 
                 hotbar_elements.update()
@@ -1425,6 +1429,10 @@ if __name__ == '__main__':
                 redness.update()
                 boss.update()
                 player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
 
                 screen.fill((0, 0, 0))
                 hotbars.draw(screen)
@@ -1435,6 +1443,7 @@ if __name__ == '__main__':
                 hotbar_elements.draw(screen)
                 bullets.draw(screen)
                 player_group.draw(screen)
+                rockets.draw(screen)
                 redness.draw(screen)
 
                 if player.get_hp() < 1:

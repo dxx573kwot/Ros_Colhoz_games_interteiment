@@ -51,17 +51,23 @@ class Player(pygame.sprite.Sprite):
         if not pygame.sprite.spritecollideany(self, self.map) or pygame.sprite.collide_mask(self, self.boss):
             self.rect = self.pos
 
-    def change_hp(self, fracture, redness_groups=[], bullets=[], early_or_latter_input=False):
-        if early_or_latter_input or self.rect == self.pos:
+    def change_hp(self, fracture, redness_groups=[], bullets=[], rockets=[], early_or_latter_input=False, move_check=True):
+        if (early_or_latter_input or self.rect == self.pos) and move_check:
             ScreenRedness(redness_groups)
             pygame.mixer.Sound("Sounds/downed_rhythm.mp3").play()
             self.hp -= 1
-        for i in bullets:
-            if pygame.sprite.collide_mask(self, i) and i.get_shot_warning() < 1:
-                i.kill()
+        for bullet in bullets:
+            if pygame.sprite.collide_mask(self, bullet) and bullet.get_shot_warning() < 1:
+                bullet.kill()
                 self.hp -= 10
                 pygame.mixer.Sound("Sounds/broken_glass.mp3").play()
                 fracture.create_fracture((self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2))
+        for rocket in rockets:
+            if pygame.sprite.collide_mask(self, rocket) and rocket.get_shot_warning() < 1 and not rocket.get_hit():
+                rocket.set_hit(True)
+                self.hp -= 20
+                for _ in range(3):
+                    fracture.create_fracture((self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2))
 
     def render(self):
         self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
@@ -71,6 +77,9 @@ class Player(pygame.sprite.Sprite):
 
     def get_hp(self):
         return self.hp
+
+    def get_pos(self):
+        return self.rect.x // CELL_SIZE, self.rect.y // CELL_SIZE
 
     def cheat_hp(self):
         self.hp += 10000
