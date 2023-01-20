@@ -6,6 +6,7 @@ import random
 import matplotlib
 import pyautogui
 import keyboard
+import os
 
 from Hotbar import Hotbar
 from Map import Board
@@ -16,18 +17,22 @@ from loadimage import load_image
 
 
 class Musik_render(Process):
-    def __init__(self, q, audio_data):
+    def __init__(self, q, audio_data, bits_in_minute):
         Process.__init__(self)
         self.q = q
+        self.bits_in_minute = bits_in_minute
         self.audio_data = audio_data
 
     def run(self):
         print("Рендер " + self.audio_data + " начат")
-        bits_in_minute = 60.0
+        bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
-        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
-                                                     trim=True)
+        if bits_in_minute != -1:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                         trim=True)
+        else:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
         print("Рендер " + self.audio_data + " окончен")
         self.q.put([beat_frames, True])
 
@@ -245,7 +250,7 @@ def sniper(cor):
         center=cor)
     screen.blit(dog_surf, rot_rect)
     font = pygame.font.Font(None, 20)
-    text = font.render("снайперская рота ждёт тебя", True, (color, color, color))
+    text = font.render("снайперская рота ждёт тебя", True, (255, 255, 255))
     text_x = WIDTH // 2 - text.get_width() // 2
     text_y = 600
     screen.blit(text, (text_x, text_y))
@@ -348,6 +353,12 @@ def get_final(pos):
     return False
 
 
+def get_privat_musik(pos):
+    if 1203 > pos[0] > 1094 and 723 > pos[1] > 695:
+        return True
+    return False
+
+
 # Add by dxx573kwot
 
 
@@ -387,12 +398,64 @@ def screenshot(file):
     pyautogui.screenshot(file)
 
 
+def take_name(keybrd, tap):
+    SIZE = WIDTH, HEIGHT = 1250, 800
+    screen = pygame.display.set_mode(SIZE)
+    run = True
+    a = ""
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                try:
+                    if keybrd[event.key] == "dell":
+                        if len(a) != 0:
+                            a = a[:-1]
+                            pygame.mixer.Sound(random.choice(tap)).play()
+                    elif keybrd[event.key] == "continue":
+                        pygame.mixer.Sound(random.choice(tap)).play()
+                        if len(a) != 0:
+                            return a
+                    else:
+                        a += keybrd[event.key]
+                        pygame.mixer.Sound(random.choice(tap)).play()
+                except KeyError:
+                    continue
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 35)
+        text = font.render(a, True, (255, 255, 255))
+        text_x = WIDTH // 2 - text.get_width() // 2
+        text_y = HEIGHT // 2 - text.get_height() // 2
+        screen.blit(text, (text_x, text_y))
+        font = pygame.font.Font(None, 35)
+        text = font.render("Ваш никнейм", True, (255, 255, 255))
+        text_x = WIDTH // 2 - text.get_width() // 2
+        text_y = 100
+        screen.blit(text, (text_x, text_y))
+        pygame.display.flip()
+
+
+def who_boss_the_gym():
+    f = open('who_is_my_boss.txt', 'r')
+    a = f.read()
+    if a == "I":
+        f.close()
+        return True
+    f.close()
+    return False
+
+
 if __name__ == '__main__':
     pygame.init()
 
     screenshot("Textur/cv/screenshot.png")
 
     print(matplotlib.get_data_path())
+    print(os.cpu_count())
+
+    I = who_boss_the_gym()
+
     clock = pygame.time.Clock()
     run = True
     run2 = True
@@ -434,6 +497,8 @@ if __name__ == '__main__':
     light = False
     medium = False
     hard = False
+    secret_level1 = False
+    secret_level2 = False
     life = True
     chaet_menu = False
     final = False
@@ -441,9 +506,10 @@ if __name__ == '__main__':
     complite_light = False
     complite_medium = False
     complite_hard = False
-    text = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
+    final2 = False
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
-    text_over = random.choice(text)
+    text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
     hero_texture = ["Textur/hero1.png", "Textur/hero2.png", "Textur/hero3.png"]
@@ -459,7 +525,7 @@ if __name__ == '__main__':
     b = 0
     c = 0
     audio_data_main = 'Musik/main.wav'
-    audio_data_Sacrifice = 'Musik/Sacrifice.wav'  # Musik/test.wav
+    audio_data_Sacrifice = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
     q1 = Queue()
@@ -481,7 +547,16 @@ if __name__ == '__main__':
     rady2 = a2[1]
     rady3 = a3[1]
     a2 = ""
+    keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
+              97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
+              120: 'x', 99: 'c', 118: 'v', 98: 'b', 110: 'n', 109: 'm', 49: '1', 50: '2', 51: '3', 52: '4', 53: '5',
+              54: '6', 55: '7', 56: '8', 57: '9', 48: "0", 8: "dell", 13: "continue"}
+    numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
+    secret_cod = ""
     print(rady1, rady2, rady3)
+    print("время запуска составило " + str(time.process_time()))
+    player_name = take_name(keybrd, tap)
+    print("Привет " + player_name)
 
     fullscreen = fullscren_dialog()
     pygame.init()
@@ -502,11 +577,6 @@ if __name__ == '__main__':
     fractures = pygame.sprite.Group()
     redness = pygame.sprite.Group()
 
-    board = Board(25, 14, CELL_SIZE, map, all_sprites)
-    boss = Boss("boss2.png", 4, 3, 5, all_sprites, boss_group)
-    player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
-    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
-    fr = Fracture(board, fractures)
     is_player_move = False  # Изначально персонаж не двигается
     is_music_start = True
     if fullscreen:
@@ -997,10 +1067,18 @@ if __name__ == '__main__':
                 text_x = 60
                 text_y = 100
                 screen.blit(text, (text_x, text_y))
+                font = pygame.font.Font(None, 50)
+                text = font.render("выйти", True, (255, 0, 0))
+                text_x = 50
+                text_y = 730
+                screen.blit(text, (text_x, text_y))
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        if tap_quit(event.pos):
+                            run = False
+                            continue
                         if get_final(event.pos):
                             final = True
                 pygame.display.flip()
@@ -1021,34 +1099,86 @@ if __name__ == '__main__':
                             chaet_menu = True
                             # game = True
             else:
+                screen.fill((0, 0, 0))
+                font = pygame.font.Font(None, 30)
+                text = font.render("свой трек", True, (255, 255, 255))
+                text_x = 1100
+                text_y = 700
+                screen.blit(text, (text_x, text_y))
                 sun_surf = pygame.image.load('Textur/load.png')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
+                if I:
+                    boss = Boss((map, all_sprites, bullets), "zatik.png", 1, 1, 5, all_sprites, boss_group)
+                    player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                    board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                    fr = Fracture(board, fractures)
+                    main = False
+                    game = True
+                if secret_cod == "715":
+                    boss = Boss((map, all_sprites, bullets), "oleg.png", 1, 1, 5, all_sprites, boss_group)
+                    player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                    board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                    fr = Fracture(board, fractures)
+                    secret_level1 = True
+                    main = False
+                    game = True
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
-                        if fgh == "лёгкий":
+                        if get_privat_musik(event.pos):
+                            pass
+                            # Кирилл, при нажатии свой трек всё идёт сюда
+                        elif fgh == "лёгкий":
+                            boss = Boss((map, all_sprites, bullets), "boss1.jpg", 2, 1, 5, all_sprites, boss_group)
+                            player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             light = True
                             main = False
                             game = True
                         elif fgh == "средний":
+                            boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
+                            player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             medium = True
                             main = False
                             game = True
                         elif fgh == "тяжёлый":
+                            boss = Boss((map, all_sprites, bullets), "boss3.png", 1, 1, 5, all_sprites, boss_group)
+                            player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
                             hard = True
                             main = False
                             game = True
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
+                    if event.type == pygame.KEYDOWN:
+                        try:
+                            if numpad[event.key] != 0:
+                                pass
+                        except KeyError:
+                            pygame.display.flip()
+                            continue
+                        if len(secret_cod) > 3:
+                            secret_cod = ""
+                        secret_cod += numpad[event.key]
             pygame.display.flip()
+
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
             if win:
-                if complite_light and complite_medium and complite_hard:
+                if (complite_light and complite_medium and complite_hard) or final2:
                     while run2:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
@@ -1339,6 +1469,7 @@ if __name__ == '__main__':
                     game = False
                     main = True
                     main1 = True
+                    final2 = False
                     continue
                 else:
                     screen.fill((0, 0, 0))
@@ -1347,6 +1478,25 @@ if __name__ == '__main__':
                     text_x = WIDTH // 2 - text.get_width() // 2
                     text_y = HEIGHT // 2 - text.get_height() // 2
                     screen.blit(text, (text_x, text_y))
+                    font = pygame.font.Font(None, 35)
+                    text = font.render("Показать финал", True, (255, 255, 255))
+                    text_x = 60
+                    text_y = 100
+                    screen.blit(text, (text_x, text_y))
+                    font = pygame.font.Font(None, 50)
+                    text = font.render("выйти", True, (255, 0, 0))
+                    text_x = 50
+                    text_y = 730
+                    screen.blit(text, (text_x, text_y))
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            if tap_quit(event.pos):
+                                run = False
+                                continue
+                            if get_final(event.pos):
+                                final2 = True
                     pygame.display.flip()
                     continue
             if light:
@@ -1369,7 +1519,32 @@ if __name__ == '__main__':
                             if tap_quit(pos):
                                 run = False
                             if tap_restart(pos):
-                                print("restart")
+                                a = 0
+                                light = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
+
                     game_over(text_over, text_restart)
                     pygame.display.flip()
                     clock.tick(FPS)
@@ -1447,7 +1622,7 @@ if __name__ == '__main__':
                 redness.draw(screen)
 
                 if player.get_hp() < 1:
-                    text_over = random.choice(text)
+                    text_over = random.choice(text123)
                     text_restart = random.choice(restart_text)
                     life = False
             elif medium:
