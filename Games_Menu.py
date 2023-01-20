@@ -446,6 +446,12 @@ def who_boss_the_gym():
     return False
 
 
+def all_sprites_kill():
+    for group in (player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness):
+        for sprite in group.sprites():
+            sprite.kill()
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -527,25 +533,68 @@ if __name__ == '__main__':
     audio_data_main = 'Musik/main.wav'
     audio_data_Sacrifice = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
-    audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'
-    q1 = Queue()
-    q2 = Queue()
-    q3 = Queue()
-    p = Musik_render(q1, "Musik/Sacrifice.wav")
-    p2 = Musik_render(q2, "Musik/Forever_Mine.wav")
-    p3 = Musik_render(q3, "Musik/The_Jounrey_Home.wav")
-    p.start()
-    p2.start()
-    p3.start()
-    a1 = q1.get()
-    a2 = q2.get()
-    a3 = q3.get()
-    render_audio_Sacrifice = a1[0]
-    render_audio_The_Forever_Mine = a2[0]
-    render_audio_The_Jounrey_Home = a3[0]
-    rady1 = a1[1]
-    rady2 = a2[1]
-    rady3 = a3[1]
+    # audio_data_Sacrifice = 'Musik/test.wav'
+    audio_data_secret1 = 'Musik/Riverside.wav'
+    audio_data_secret2 = 'Musik/I.wav'
+    audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
+    if os.cpu_count() <= 4:
+        q1 = Queue()
+        q2 = Queue()
+        q3 = Queue()
+        p = Musik_render(q1, audio_data_Sacrifice, 60)
+        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
+        p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
+        p.start()
+        p2.start()
+        p3.start()
+        a1 = q1.get()
+        a2 = q2.get()
+        a3 = q3.get()
+        render_audio_Sacrifice = a1[0]
+        render_audio_The_Forever_Mine = a2[0]
+        render_audio_The_Jounrey_Home = a3[0]
+        rady1 = a1[1]
+        rady2 = a2[1]
+        rady3 = a3[1]
+        q1 = Queue()
+        q2 = Queue()
+        p = Musik_render(q1, audio_data_secret1, -1)
+        p2 = Musik_render(q2, audio_data_secret2, -1)
+        p.start()
+        p2.start()
+        a1 = q1.get()
+        a2 = q2.get()
+        render_audio_secret1 = a1[0]
+        render_audio_secret2 = a2[0]
+    else:
+        q1 = Queue()
+        q2 = Queue()
+        q3 = Queue()
+        q4 = Queue()
+        q5 = Queue()
+        p = Musik_render(q1, audio_data_Sacrifice, 60)
+        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
+        p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
+        p4 = Musik_render(q4, audio_data_secret1, -1)
+        p5 = Musik_render(q5, audio_data_secret2, -1)
+        p.start()
+        p2.start()
+        p3.start()
+        p4.start()
+        p5.start()
+        a1 = q1.get()
+        a2 = q2.get()
+        a3 = q3.get()
+        a4 = q4.get()
+        a5 = q5.get()
+        render_audio_Sacrifice = a1[0]
+        render_audio_The_Forever_Mine = a2[0]
+        render_audio_The_Jounrey_Home = a3[0]
+        render_audio_secret1 = a4[0]
+        render_audio_secret2 = a5[0]
+        rady1 = a1[1]
+        rady2 = a2[1]
+        rady3 = a3[1]
     a2 = ""
     keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
               97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
@@ -1109,7 +1158,7 @@ if __name__ == '__main__':
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
                 if I:
-                    boss = Boss((map, all_sprites, bullets), "zatik.png", 1, 1, 5, all_sprites, boss_group)
+                    boss = Boss((map, all_sprites, bullets), "zatik.png", 1, 1, 20, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1117,7 +1166,7 @@ if __name__ == '__main__':
                     main = False
                     game = True
                 if secret_cod == "715":
-                    boss = Boss((map, all_sprites, bullets), "oleg.png", 1, 1, 5, all_sprites, boss_group)
+                    boss = Boss((map, all_sprites, bullets), "oleg.png", 1, 1, 20, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1134,7 +1183,7 @@ if __name__ == '__main__':
                             pass
                             # Кирилл, при нажатии свой трек всё идёт сюда
                         elif fgh == "лёгкий":
-                            boss = Boss((map, all_sprites, bullets), "boss1.jpg", 2, 1, 5, all_sprites, boss_group)
+                            boss = Boss("boss1.jpg", 2, 1, 3, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1143,7 +1192,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "средний":
-                            boss = Boss((map, all_sprites, bullets), "boss2.png", 4, 3, 5, all_sprites, boss_group)
+                            boss = Boss("boss2.png", 4, 3, 7, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1152,7 +1201,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "тяжёлый":
-                            boss = Boss((map, all_sprites, bullets), "boss3.png", 1, 1, 5, all_sprites, boss_group)
+                            boss = Boss("boss3.png", 1, 1, 10, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1526,24 +1575,7 @@ if __name__ == '__main__':
                                 first = True
                                 life = True
                                 main = True
-                                for i in player_group.sprites():
-                                    i.kill()
-                                for i in boss_group.sprites():
-                                    i.kill()
-                                for i in all_sprites.sprites():
-                                    i.kill()
-                                for i in map.sprites():
-                                    i.kill()
-                                for i in bullets.sprites():
-                                    i.kill()
-                                for i in hotbars.sprites():
-                                    i.kill()
-                                for i in hotbar_elements.sprites():
-                                    i.kill()
-                                for i in fractures.sprites():
-                                    i.kill()
-                                for i in redness.sprites():
-                                    i.kill()
+                                all_sprites_kill()
 
                     game_over(text_over, text_restart)
                     pygame.display.flip()
