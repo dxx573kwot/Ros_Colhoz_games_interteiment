@@ -1,7 +1,7 @@
 import time
 import librosa.display
 import pygame
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Pipe
 import random
 import matplotlib
 import pyautogui
@@ -35,6 +35,34 @@ class Musik_render(Process):
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
         print("Рендер " + self.audio_data + " окончен")
         self.q.put([beat_frames, True])
+
+
+class Musik_render2(Process):
+    def __init__(self, q, audio_data, bits_in_minute, conn):
+        Process.__init__(self)
+        self.q = q
+        self.con = conn
+        self.bits_in_minute = bits_in_minute
+        self.audio_data = audio_data
+        self.work = True
+
+    def run(self):
+        self.con.send([True])
+        print("Рендер " + self.audio_data + " начат")
+        bits_in_minute = self.bits_in_minute
+        y, sr = librosa.load(self.audio_data)
+        y_harmonic, y_percussive = librosa.effects.hpss(y)
+        if bits_in_minute != -1:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                         trim=True)
+        else:
+            tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
+        print("Рендер " + self.audio_data + " окончен")
+        self.work = False
+        print(self.work)
+        self.q.put([beat_frames, True])
+        self.con.send([False])
+        self.con.close()
 
 
 def get_click(pos):
@@ -452,6 +480,8 @@ def all_sprites_kill():
             sprite.kill()
 
 
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -503,6 +533,7 @@ if __name__ == '__main__':
     light = False
     medium = False
     hard = False
+    my_level = False
     secret_level1 = False
     secret_level2 = False
     life = True
@@ -513,6 +544,7 @@ if __name__ == '__main__':
     complite_medium = False
     complite_hard = False
     final2 = False
+    status = False
     text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
     text_over = random.choice(text123)
@@ -536,6 +568,7 @@ if __name__ == '__main__':
     # audio_data_Sacrifice = 'Musik/test.wav'
     audio_data_secret1 = 'Musik/Riverside.wav'
     audio_data_secret2 = 'Musik/I.wav'
+    audio_data_my_level = 'Musik/castom_musik/file.wav'
     audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
     if os.cpu_count() <= 4:
         q1 = Queue()
@@ -558,40 +591,50 @@ if __name__ == '__main__':
         rady3 = a3[1]
         q1 = Queue()
         q2 = Queue()
+        q3 = Queue()
         p = Musik_render(q1, audio_data_secret1, -1)
         p2 = Musik_render(q2, audio_data_secret2, -1)
+        p3 = Musik_render(q3, audio_data_my_level, -1)
         p.start()
         p2.start()
+        p3.start()
         a1 = q1.get()
         a2 = q2.get()
+        a3 = q3.get()
         render_audio_secret1 = a1[0]
         render_audio_secret2 = a2[0]
+        render_audio_my_level = a3[0]
     else:
         q1 = Queue()
         q2 = Queue()
         q3 = Queue()
         q4 = Queue()
         q5 = Queue()
+        q6 = Queue()
         p = Musik_render(q1, audio_data_Sacrifice, 60)
         p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
         p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
         p4 = Musik_render(q4, audio_data_secret1, -1)
         p5 = Musik_render(q5, audio_data_secret2, -1)
+        p6 = Musik_render(q6, audio_data_my_level, -1)
         p.start()
         p2.start()
         p3.start()
         p4.start()
         p5.start()
+        p6.start()
         a1 = q1.get()
         a2 = q2.get()
         a3 = q3.get()
         a4 = q4.get()
         a5 = q5.get()
+        a6 = q6.get()
         render_audio_Sacrifice = a1[0]
         render_audio_The_Forever_Mine = a2[0]
         render_audio_The_Jounrey_Home = a3[0]
         render_audio_secret1 = a4[0]
         render_audio_secret2 = a5[0]
+        render_audio_my_level = a6[0]
         rady1 = a1[1]
         rady2 = a2[1]
         rady3 = a3[1]
@@ -1158,7 +1201,7 @@ if __name__ == '__main__':
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
                 if I:
-                    boss = Boss((map, all_sprites, bullets), "zatik.png", 1, 1, 20, all_sprites, boss_group)
+                    boss = Boss("zatik.png", 1, 1, 20, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1166,7 +1209,7 @@ if __name__ == '__main__':
                     main = False
                     game = True
                 if secret_cod == "715":
-                    boss = Boss((map, all_sprites, bullets), "oleg.png", 1, 1, 20, all_sprites, boss_group)
+                    boss = Boss("oleg.png", 1, 1, 20, all_sprites, boss_group)
                     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                     board = Board(25, 14, CELL_SIZE, map, all_sprites)
                     hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1180,7 +1223,14 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
                         if get_privat_musik(event.pos):
-                            pass
+                            boss = Boss("exploooosion2.png", 2, 2, 3, all_sprites, boss_group)
+                            player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                            board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                            hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                            fr = Fracture(board, fractures)
+                            my_level = True
+                            main = False
+                            game = True
                             # Кирилл, при нажатии свой трек всё идёт сюда
                         elif fgh == "лёгкий":
                             boss = Boss("boss1.jpg", 2, 1, 3, all_sprites, boss_group)
@@ -1548,7 +1598,225 @@ if __name__ == '__main__':
                                 final2 = True
                     pygame.display.flip()
                     continue
-            if light:
+            if I:
+                if first:
+                    first = False
+                    pygame.mixer.music.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                run = False
+                            if tap_restart(pos):
+                                a = 0
+                                light = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                all_sprites_kill()
+
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.mixer.stop()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            is_player_move = event
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_secret2[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    win = True
+                    continue
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_secret2)
+                    time.sleep(0.1)
+                    pygame.mixer.music.play()
+                    is_music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
+
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(is_player_move, *events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=False)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+                elif is_player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+
+                hotbar_elements.update()
+                fractures.update()
+                redness.update()
+                boss.update()
+                player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
+
+                screen.fill((0, 0, 0))
+                hotbars.draw(screen)
+                fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
+                hotbar_elements.draw(screen)
+                bullets.draw(screen)
+                player_group.draw(screen)
+                rockets.draw(screen)
+                redness.draw(screen)
+
+                if player.get_hp() < 1:
+                    text_over = random.choice(text123)
+                    text_restart = random.choice(restart_text)
+                    life = False
+            elif secret_level1:
+                if first:
+                    first = False
+                    pygame.mixer.music.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                run = False
+                            if tap_restart(pos):
+                                a = 0
+                                light = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                all_sprites_kill()
+
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                        pygame.mixer.stop()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            is_player_move = event
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_secret1[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    win = True
+                    continue
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_secret1)
+                    time.sleep(0.1)
+                    pygame.mixer.music.play()
+                    is_music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
+
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(is_player_move, *events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=False)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+                elif is_player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+
+                hotbar_elements.update()
+                fractures.update()
+                redness.update()
+                boss.update()
+                player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
+
+                screen.fill((0, 0, 0))
+                hotbars.draw(screen)
+                fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
+                hotbar_elements.draw(screen)
+                bullets.draw(screen)
+                player_group.draw(screen)
+                rockets.draw(screen)
+                redness.draw(screen)
+
+                if player.get_hp() < 1:
+                    text_over = random.choice(text123)
+                    text_restart = random.choice(restart_text)
+                    life = False
+            elif light:
                 if first:
                     first = False
                     pygame.mixer.music.stop()
@@ -1658,9 +1926,377 @@ if __name__ == '__main__':
                     text_restart = random.choice(restart_text)
                     life = False
             elif medium:
-                pass
+                if first:
+                    first = False
+                    pygame.mixer.music.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                run = False
+                            if tap_restart(pos):
+                                a = 0
+                                medium = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            is_player_move = event
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_The_Forever_Mine[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    win = True
+                    continue
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_Forever_Mine)
+                    time.sleep(0.1)
+                    pygame.mixer.music.play()
+                    is_music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
+
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(is_player_move, *events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=False)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+                elif is_player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+
+                hotbar_elements.update()
+                fractures.update()
+                redness.update()
+                boss.update()
+                player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
+
+                screen.fill((0, 0, 0))
+                hotbars.draw(screen)
+                fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
+                hotbar_elements.draw(screen)
+                bullets.draw(screen)
+                player_group.draw(screen)
+                rockets.draw(screen)
+                redness.draw(screen)
+
+                if player.get_hp() < 1:
+                    text_over = random.choice(text123)
+                    text_restart = random.choice(restart_text)
+                    life = False
             elif hard:
-                pass
+                if first:
+                    first = False
+                    pygame.mixer.music.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                run = False
+                            if tap_restart(pos):
+                                a = 0
+                                hard = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            is_player_move = event
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_The_Jounrey_Home[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    win = True
+                    continue
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_The_Jounrey_Home)
+                    time.sleep(0.1)
+                    pygame.mixer.music.play()
+                    is_music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
+
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(is_player_move, *events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=False)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+                elif is_player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+
+                hotbar_elements.update()
+                fractures.update()
+                redness.update()
+                boss.update()
+                player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
+
+                screen.fill((0, 0, 0))
+                hotbars.draw(screen)
+                fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
+                hotbar_elements.draw(screen)
+                bullets.draw(screen)
+                player_group.draw(screen)
+                rockets.draw(screen)
+                redness.draw(screen)
+
+                if player.get_hp() < 1:
+                    text_over = random.choice(text123)
+                    text_restart = random.choice(restart_text)
+                    life = False
+            elif my_level:
+                if first:
+                    first = False
+                    pygame.mixer.music.stop()
+                    tic = time.perf_counter()  # Время до начала игры
+                toc = time.perf_counter() - tic
+                if not life:
+                    if first2:
+                        first2 = False
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load("Musik/dead.mp3")
+                        pygame.mixer.music.play()
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            run = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            pos = event.pos
+                            if tap_quit(pos):
+                                run = False
+                            if tap_restart(pos):
+                                a = 0
+                                hard = False
+                                is_music_start = True
+                                first2 = True
+                                first = True
+                                life = True
+                                main = True
+                                for i in player_group.sprites():
+                                    i.kill()
+                                for i in boss_group.sprites():
+                                    i.kill()
+                                for i in all_sprites.sprites():
+                                    i.kill()
+                                for i in map.sprites():
+                                    i.kill()
+                                for i in bullets.sprites():
+                                    i.kill()
+                                for i in hotbars.sprites():
+                                    i.kill()
+                                for i in hotbar_elements.sprites():
+                                    i.kill()
+                                for i in fractures.sprites():
+                                    i.kill()
+                                for i in redness.sprites():
+                                    i.kill()
+                    game_over(text_over, text_restart)
+                    pygame.display.flip()
+                    clock.tick(FPS)
+                    continue
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key in (pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT):
+                            is_player_move = event
+                        if event.key == 1073741911:
+                            player.cheat_hp()
+                try:
+                    if toc > render_audio_my_level[a]:
+                        hotbar.create_hotbar_element()  # Создание элементов в хотбаре
+                        a += 1
+                except IndexError:
+                    win = True
+                    continue
+                if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+                    # (время прохождения элементом хотбара)
+                    pygame.mixer.music.load(audio_data_my_level)
+                    time.sleep(0.1)
+                    pygame.mixer.music.play()
+                    is_music_start = False
+                for i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False):
+                    i.change_condition()
+
+                if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
+                    # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
+                    pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                    all_sprites.update(is_player_move, *events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=False)
+                elif [i for i in hotbar_elements.sprites() if not (
+                        i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
+                                                         False)) and i.get_condition()]:
+                    # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
+                    for i in hotbar_elements.sprites():
+                        if i.get_condition():
+                            i.kill()
+                    all_sprites.update(*events)
+                    rockets.update()
+                    boss.attack((map, all_sprites, bullets), (player, rockets))
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+                elif is_player_move:
+                    # Если игрок попытался сделать шаг, но при этом элемент не достиг сердца.
+                    player.change_hp(fracture=fr, redness_groups=redness, bullets=bullets, rockets=rockets,
+                                     early_or_latter_input=True)
+
+                hotbar_elements.update()
+                fractures.update()
+                redness.update()
+                boss.update()
+                player.render()
+                for i in rockets.sprites():
+                    i.explosion()
+                player.change_hp(fracture=fr, rockets=rockets, move_check=False)
+                # Отдельная проверка, если взрыв ракеты произошёл около персонажа
+
+                screen.fill((0, 0, 0))
+                hotbars.draw(screen)
+                fractures.draw(screen)
+                screen.blit(secret_screen, (0, 0))
+                map.draw(screen)
+                boss_group.draw(screen)
+                hotbar_elements.draw(screen)
+                bullets.draw(screen)
+                player_group.draw(screen)
+                rockets.draw(screen)
+                redness.draw(screen)
+
+                if player.get_hp() < 1:
+                    text_over = random.choice(text123)
+                    text_restart = random.choice(restart_text)
+                    life = False
             pygame.display.flip()
             clock.tick(FPS)
             is_player_move = False
