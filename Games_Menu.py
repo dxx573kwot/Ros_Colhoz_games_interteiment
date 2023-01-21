@@ -13,6 +13,7 @@ from Map import Board
 from Player import Player
 from Boss import Boss
 from Fracture import Fracture
+from Uncommon_boss import UncommonBoss
 from loadimage import load_image
 
 
@@ -478,8 +479,6 @@ def all_sprites_kill():
     for group in (player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
         for sprite in group.sprites():
             sprite.kill()
-
-
 
 
 if __name__ == '__main__':
@@ -1202,7 +1201,7 @@ if __name__ == '__main__':
                 screen.blit(sun_surf, sun_rect)
                 settings = False
                 if I:
-                    settings = ("zatik.png", 1, 1, 8)
+                    settings = ("special", 1, 1, 8)
                     music_play_now = audio_data_secret2
                     music_render_now = render_audio_secret2
                 if secret_cod == "715":
@@ -1233,7 +1232,10 @@ if __name__ == '__main__':
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
                     if settings:
-                        boss = Boss(*settings, all_sprites, boss_group)
+                        if settings[0] == "special":
+                            boss = UncommonBoss(5, all_sprites, boss_group)
+                        else:
+                            boss = Boss(*settings, all_sprites, boss_group)
                         player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                         board = Board(25, 14, CELL_SIZE, map, all_sprites)
                         hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
@@ -1589,7 +1591,7 @@ if __name__ == '__main__':
                     pygame.mixer.music.play()
 
                 for event in events:
-                    if event.type == pygame.QUIT:
+                    if event.type == pygame.QUIT or settings[0] == "special":
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         pos = event.pos
