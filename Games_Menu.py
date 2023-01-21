@@ -1638,7 +1638,7 @@ if __name__ == '__main__':
                 i.change_condition()
             if pygame.sprite.spritecollideany(hotbar.get_heart(), hotbar_elements) and is_player_move:
                 # Ход делается, если элемент достиг сердца, игрок сделал шаг и элемент ещё находится внутри сердца.
-                pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, True)
+                pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements, False)[0].kill()
                 all_sprites.update(is_player_move, *events)
                 rockets.update()
                 boss.attack((map, all_sprites, bullets), (player, rockets))
@@ -1648,9 +1648,7 @@ if __name__ == '__main__':
                     i in pygame.sprite.spritecollide(hotbar.get_heart(), hotbar_elements,
                                                      False)) and i.get_condition()]:
                 # Ход делается, если элемент пересёк сердце, но при этом игрок не сделал шаг.
-                for i in hotbar_elements.sprites():
-                    if i.get_condition():
-                        i.kill()
+                hotbar_elements.sprites()[0].kill()
                 all_sprites.update(*events)
                 rockets.update()
                 boss.attack((map, all_sprites, bullets), (player, rockets))
