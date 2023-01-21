@@ -28,7 +28,7 @@ class Musik_render(Process):
         bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
-        if bits_in_minute != -1:
+        if bits_in_minute > 0:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                          trim=True)
         else:
@@ -475,11 +475,10 @@ def who_boss_the_gym():
 
 
 def all_sprites_kill():
-    for group in (player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
+    for group in (
+    player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
         for sprite in group.sprites():
             sprite.kill()
-
-
 
 
 if __name__ == '__main__':
