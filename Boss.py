@@ -71,7 +71,7 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode(SIZE)
     board = Board(25, 16, CELL_SIZE, all_sprites, map)
-    boss = Boss("boss1.jpg", 2, 1, 5, all_sprites, boss_group)
+    boss = Boss("exploooosion3.png", 10, 5, 5, all_sprites, boss_group)
     running = True
     while running:
         for event in pygame.event.get():

@@ -1251,7 +1251,7 @@ if __name__ == '__main__':
                             main = False
                             game = True
                         elif fgh == "тяжёлый":
-                            boss = Boss("boss3.png", 1, 1, 6, all_sprites, boss_group)
+                            boss = Boss("exploooosion4.png", 4, 3, 6, all_sprites, boss_group)
                             player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
                             board = Board(25, 14, CELL_SIZE, map, all_sprites)
                             hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
