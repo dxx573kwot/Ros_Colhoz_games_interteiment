@@ -476,7 +476,8 @@ def who_boss_the_gym():
 
 
 def all_sprites_kill():
-    for group in (player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
+    for group in (
+    player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
         for sprite in group.sprites():
             sprite.kill()
 
