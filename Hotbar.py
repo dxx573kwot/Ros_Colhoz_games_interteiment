@@ -35,7 +35,7 @@ class Hotbar(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 14, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     hotbar = Hotbar((all_sprites, hotbar_elements), (all_sprites, heart_group), all_sprites)
     hotbar.create_hotbar_element()
     clock = pygame.time.Clock()

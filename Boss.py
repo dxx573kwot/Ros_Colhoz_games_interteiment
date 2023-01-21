@@ -70,7 +70,7 @@ class Boss(pygame.sprite.Sprite):
 if __name__ == "__main__":
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     boss = Boss("exploooosion3.png", 10, 5, 5, all_sprites, boss_group)
     running = True
     while running:

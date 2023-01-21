@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     boss = Boss((map, all_sprites, bullets), "boss12.jpg", 5, all_sprites, boss_group)
     player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites)
     fr = Fracture(fractures)

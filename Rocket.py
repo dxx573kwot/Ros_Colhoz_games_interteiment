@@ -130,7 +130,7 @@ class Rocket(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     r = Rocket(False, 10, 10, 5, 30, all_sprites, rockets)
     running = True
     clock = pygame.time.Clock()

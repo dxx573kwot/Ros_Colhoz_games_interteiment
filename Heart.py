@@ -20,7 +20,7 @@ class Heart(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 14, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     heart = Heart(all_sprites)
     running = True
     while running:

@@ -8,17 +8,15 @@ def gluing_image(images, row, col):
         for j in range(col):
             screen.blit(pygame.transform.scale(load_image(images[im]), (400, 400)), (400 * j, 400 * i))
             im += 1
-    pygame.image.save(screen, "Textur/exploooosion4.png")
+    pygame.image.save(screen, "Textur/t.png")
 
 
 if __name__ == "__main__":
     pygame.init()
     for i in range(12):
         print('"crab/crab-' + str(i) + '.png",', end="")
-    col, row = 4, 3
+    col, row = 5, 2
     size = width, height = 400 * col, 400 * row
     screen = pygame.display.set_mode(size)
     gluing_image(
-        ["crab/crab-0.png", "crab/crab-1.png", "crab/crab-2.png", "crab/crab-3.png", "crab/crab-4.png",
-         "crab/crab-5.png", "crab/crab-6.png", "crab/crab-7.png", "crab/crab-8.png", "crab/crab-9.png",
-         "crab/crab-10.png", "crab/crab-11.png"], row, col)
+        ["b1/p1.png", "b1/p2.png", "b1/p3.png", "b1/p4.png", "b1/p5.png", "b1/p6.png", "b1/p7.png", "b1/p8.png", "b1/p9.png", "b1/p10.png"], row, col)

@@ -63,7 +63,7 @@ class Bullet(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     # Тесты работоспособности пуль.
     # for i in range(16):
     #     Bullet(map, 24, i, 5, "west", all_sprites, bullets)

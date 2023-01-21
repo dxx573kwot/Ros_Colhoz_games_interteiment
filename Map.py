@@ -1,6 +1,8 @@
 import random
 import pygame
+import os
 
+from loadimage import load_image
 
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1250, 800
@@ -10,15 +12,16 @@ map = pygame.sprite.Group()
 
 
 class Board(pygame.sprite.Sprite):
-    def __init__(self, width: int, height: int, cell_size: int, *group):
+    def __init__(self, texture_pack: str, width: int, height: int, cell_size: int, *group):
         super().__init__(*group)
         self.width = width
         self.height = height
         self.cell_size = cell_size
         self.left = 0
         self.top = 0
+        texturs = [load_image(f"{texture_pack}/{i}") for i in os.listdir(f"Textur/{texture_pack}")]  # Текстурки
         # Оставил нулевые отступы на случай, если мы потом решим их добавить
-        self.board = [[random.choice(["Textur/CUMmen.jpg", "Textur/CUMmen_gold.jpg", "Textur/CUMmen_Iron.jpg"])
+        self.board = [[random.choice(texturs)
                        for _ in range(width)] for _ in range(height)]
         self.image = pygame.transform.scale(pygame.Surface([0, 0]), (self.width * self.cell_size, self.height * self.cell_size))
         self.render(self.image)
@@ -29,7 +32,7 @@ class Board(pygame.sprite.Sprite):
             for j in range(self.width):
                 pygame.draw.rect(screen, "white", (
                     self.left + j * self.cell_size, i * self.cell_size + self.top, self.cell_size, self.cell_size), 1)
-                dog_surf = pygame.transform.scale(pygame.image.load(self.board[i][j]),
+                dog_surf = pygame.transform.scale(self.board[i][j],
                                                   (self.cell_size - 1, self.cell_size - 1))
                 rot_rect = dog_surf.get_rect(
                     center=(self.left + j * self.cell_size + (self.cell_size / 2),
@@ -42,7 +45,7 @@ class Board(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("special_pack_1", 25, 14, CELL_SIZE, all_sprites, map)
     running = True
     while running:
         for event in pygame.event.get():
@@ -52,3 +55,4 @@ if __name__ == "__main__":
         all_sprites.update()
         all_sprites.draw(screen)
         pygame.display.flip()
+

@@ -1200,13 +1200,15 @@ if __name__ == '__main__':
                 sun_surf = pygame.image.load('Textur/load.png')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
-                settings = False
+                settings_boss = False
                 if I:
-                    settings = ("special", 1, 1, 8)
+                    settings_boss = ("special", 1, 1, 8)
+                    texture_pack = "classic_pack"
                     music_play_now = audio_data_secret2
                     music_render_now = render_audio_secret2
                 if secret_cod == "715":
-                    settings = ("oleg.png", 10, 5, 7)
+                    settings_boss = ("oleg.png", 10, 5, 7)
+                    texture_pack = "special_pack_1"
                     music_play_now = audio_data_secret1
                     music_render_now = render_audio_secret1
                 for event in pygame.event.get():
@@ -1215,30 +1217,34 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
                         if get_privat_musik(event.pos):
-                            settings = ("custom_music.png", 2, 2, 8)
+                            settings_boss = ("custom_music.png", 2, 2, 8)
+                            texture_pack = "classic_pack"
                             # Кирилл, при нажатии свой трек всё идёт сюда
                         elif fgh == "лёгкий":
-                            settings = ("boss1.jpg", 2, 1, 3)
+                            settings_boss = ("boss1.png", 4, 2, 3)
+                            texture_pack = "classic_pack"
                             music_play_now = audio_data_Sacrifice
                             music_render_now = render_audio_Sacrifice
                         elif fgh == "средний":
-                            settings = ("boss2.png", 4, 3, 7)
+                            settings_boss = ("boss2.png", 5, 2, 7)
+                            texture_pack = "classic_pack"
                             music_play_now = audio_data_Forever_Mine
                             music_render_now = render_audio_The_Forever_Mine
                         elif fgh == "тяжёлый":
-                            settings = ("boss3.png", 1, 1, 10)
+                            settings_boss = ("boss3.png", 4, 3, 10)
+                            texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
                             music_render_now = render_audio_The_Jounrey_Home
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
-                    if settings:
-                        if settings[0] == "special":
+                    if settings_boss:
+                        if settings_boss[0] == "special":
                             boss = UncommonBoss(5, all_sprites, boss_group)
                         else:
-                            boss = Boss(*settings, all_sprites, boss_group)
+                            boss = Boss(*settings_boss, all_sprites, boss_group)
                         player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
-                        board = Board(25, 14, CELL_SIZE, map, all_sprites)
+                        board = Board(texture_pack, 25, 14, CELL_SIZE, all_sprites, map)
                         hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
                         fr = Fracture(board, fractures)
                         main = False
@@ -1273,17 +1279,17 @@ if __name__ == '__main__':
                             text_y = 580
                             screen.blit(text, (text_x, text_y))
                             font = pygame.font.Font(None, 30)
-                            if b >= len("Почему какай то шарик укланяется от пуль?"):
+                            if b >= len("Почему какой то шарик уклоняется от пуль?"):
                                 part1 = False
                                 part2 = True
                                 time.sleep(2)
                                 continue
-                            a2 += "Почему какай-то шарик укланяется от пуль?"[b]
+                            a2 += "Почему какой-то шарик уклоняется от пуль?"[b]
                             text = font.render(a2, True, (255, 255, 255))
                             text_x = 60
                             text_y = 625
                             screen.blit(text, (text_x, text_y))
-                            if "Почему какай-то шарик укланяется от пуль?"[b] != " ":
+                            if "Почему какой-то шарик уклоняется от пуль?"[b] != " ":
                                 pygame.mixer.music.load(random.choice(tap))
                             else:
                                 pygame.mixer.music.load(random.choice(space))
@@ -1592,7 +1598,7 @@ if __name__ == '__main__':
                     pygame.mixer.music.play()
 
                 for event in events:
-                    if event.type == pygame.QUIT or settings[0] == "special":
+                    if event.type == pygame.QUIT or settings_boss[0] == "special":
                         run = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         pos = event.pos
@@ -1689,3 +1695,5 @@ if __name__ == '__main__':
             pygame.display.flip()
             clock.tick(FPS)
             is_player_move = False
+
+"Я Олег"
