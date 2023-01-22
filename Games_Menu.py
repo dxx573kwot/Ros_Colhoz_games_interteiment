@@ -427,9 +427,12 @@ def screenshot(file):
     pyautogui.screenshot(file)
 
 
-def take_name(keybrd, tap):
+def take_name(keybrd, tap, fullscreen):
     SIZE = WIDTH, HEIGHT = 1250, 800
-    screen = pygame.display.set_mode(SIZE)
+    if fullscreen:
+        screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
+    else:
+        screen = pygame.display.set_mode(SIZE)
     run = True
     a = ""
     while run:
@@ -545,8 +548,8 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
-    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
-    restart_text = ["пострадать ещё раз!", "хочу ещё!"]
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715", "alt+f4"]  # любой текст окончания игры
+    restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
     text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
@@ -607,50 +610,41 @@ if __name__ == '__main__':
         rady2 = a2[1]
         rady3 = a3[1]
         q1 = Queue()
-        q2 = Queue()
         q3 = Queue()
         p = Musik_render(q1, audio_data_secret1, -1)
-        p2 = Musik_render(q2, audio_data_secret2, -1)
         p3 = Musik_render(q3, audio_data_my_level, -1)
         p.start()
         p2.start()
         p3.start()
         a1 = q1.get()
-        a2 = q2.get()
         a3 = q3.get()
         render_audio_secret1 = a1[0]
-        render_audio_secret2 = a2[0]
         render_audio_my_level = a3[0]
     else:
         q1 = Queue()
         q2 = Queue()
         q3 = Queue()
         q4 = Queue()
-        q5 = Queue()
         q6 = Queue()
         p = Musik_render(q1, audio_data_The_Jounrey_Home, 60)  # 60
         p2 = Musik_render(q2, audio_data_Forever_Mine, 90)  # 90
         p3 = Musik_render(q3, audio_data_Sacrifice, 120)  # 120
         p4 = Musik_render(q4, audio_data_secret1, -1)
-        p5 = Musik_render(q5, audio_data_secret2, -1)
         p6 = Musik_render(q6, audio_data_my_level, -1)
         p.start()
         p2.start()
         p3.start()
         p4.start()
-        p5.start()
         p6.start()
         a1 = q1.get()
         a2 = q2.get()
         a3 = q3.get()
         a4 = q4.get()
-        a5 = q5.get()
         a6 = q6.get()
         render_audio_Sacrifice = a1[0]
         render_audio_The_Forever_Mine = a2[0]
         render_audio_The_Jounrey_Home = a3[0]
         render_audio_secret1 = a4[0]
-        render_audio_secret2 = a5[0]
         render_audio_my_level = a6[0]
         rady1 = a1[1]
         rady2 = a2[1]
@@ -667,12 +661,12 @@ if __name__ == '__main__':
               54: '6', 55: '7', 56: '8', 57: '9', 48: "0", 8: "dell", 13: "continue"}
     numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
     secret_cod = ""
+    fullscreen = fullscren_dialog()
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
-    player_name = take_name(keybrd, tap)
+    player_name = take_name(keybrd, tap, fullscreen)
     print("Привет " + player_name)
 
-    fullscreen = fullscren_dialog()
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
     CELL_SIZE = 50
