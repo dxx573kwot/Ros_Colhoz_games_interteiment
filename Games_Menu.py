@@ -572,14 +572,22 @@ if __name__ == '__main__':
     tic = 0
     b = 0
     c = 0
+    all_render_music = {}
+    for i in os.listdir("render_music"):
+        with open(f"render_music/{i}", mode="r", encoding="UTF-8") as f:
+            all_render_music[i.split(".")[0]] = list(map(float, f.read().split()))
+    print(all_render_music.keys())
+
     audio_data_main = 'Musik/main.wav'
-    audio_data_Sacrifice = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
+    audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
     audio_data_Forever_Mine = 'Musik/Forever_Mine.wav'
     # audio_data_Sacrifice = 'Musik/test.wav'
     audio_data_secret1 = 'Musik/Riverside.wav'
     audio_data_secret2 = 'Musik/I.wav'
-    audio_data_my_level = 'Musik/castom_musik/file.wav'
-    audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
+    audio_data_my_level = 'Musik/file.wav'
+    audio_data_Sacrifice = 'Musik/Sacrifice.wav'
+    rady1, rady2, rady3 = True, True, True
+    '''
     if I:
         q1 = Queue()
         p = Musik_render(q1, audio_data_secret2, -1)
@@ -593,9 +601,9 @@ if __name__ == '__main__':
         q1 = Queue()
         q2 = Queue()
         q3 = Queue()
-        p = Musik_render(q1, audio_data_Sacrifice, 60)
-        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
-        p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
+        p = Musik_render(q1, audio_data_The_Jounrey_Home, 60)  # 60
+        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)  # 90
+        p3 = Musik_render(q3, audio_data_Sacrifice, 120)  # 120
         p.start()
         p2.start()
         p3.start()
@@ -625,9 +633,9 @@ if __name__ == '__main__':
         q3 = Queue()
         q4 = Queue()
         q6 = Queue()
-        p = Musik_render(q1, audio_data_Sacrifice, 60)
-        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
-        p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
+        p = Musik_render(q1, audio_data_The_Jounrey_Home, 60)  # 60
+        p2 = Musik_render(q2, audio_data_Forever_Mine, 90)  # 90
+        p3 = Musik_render(q3, audio_data_Sacrifice, 120)  # 120
         p4 = Musik_render(q4, audio_data_secret1, -1)
         p6 = Musik_render(q6, audio_data_my_level, -1)
         p.start()
@@ -648,6 +656,11 @@ if __name__ == '__main__':
         rady1 = a1[1]
         rady2 = a2[1]
         rady3 = a3[1]
+    with open(f"render_music/{audio_data_Sacrifice.split('/')[-1].split(',')[0]}.txt", encoding="UTF-8", mode="w") as f:
+        for i in render_audio_data_Sacrifice:
+            f.wirte(str(i) + " ")
+    '''
+    print(rady1)
     a2 = ""
     keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
               97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
@@ -1211,16 +1224,17 @@ if __name__ == '__main__':
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
                 settings_boss = False
+                fgh = False
                 if I:
                     settings_boss = ("special", 1, 1, 8)
                     texture_pack = "classic_pack"
                     music_play_now = audio_data_secret2
-                    music_render_now = render_audio_secret2
+                    music_render_now = all_render_music["I"]
                 if secret_cod == "715":
                     settings_boss = ("oleg.png", 10, 5, 7)
                     texture_pack = "special_pack_1"
                     music_play_now = audio_data_secret1
-                    music_render_now = render_audio_secret1
+                    music_render_now = all_render_music["Riverside"]
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
@@ -1233,18 +1247,18 @@ if __name__ == '__main__':
                         elif fgh == "лёгкий":
                             settings_boss = ("boss1.png", 4, 2, 3)
                             texture_pack = "classic_pack"
-                            music_play_now = audio_data_Sacrifice
-                            music_render_now = render_audio_Sacrifice
+                            music_play_now = audio_data_The_Jounrey_Home
+                            music_render_now = all_render_music["Sacrifice"]
                         elif fgh == "средний":
                             settings_boss = ("boss2.png", 5, 2, 7)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_Forever_Mine
-                            music_render_now = render_audio_The_Forever_Mine
+                            music_render_now = all_render_music["Forever_Mine"]
                         elif fgh == "тяжёлый":
                             settings_boss = ("boss3.png", 4, 3, 10)
                             texture_pack = "classic_pack"
-                            music_play_now = audio_data_The_Jounrey_Home
-                            music_render_now = render_audio_The_Jounrey_Home
+                            music_play_now = audio_data_Sacrifice
+                            music_render_now = all_render_music["The_Jounrey_Home"]
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
@@ -1712,5 +1726,3 @@ if __name__ == '__main__':
             pygame.display.flip()
             clock.tick(FPS)
             is_player_move = False
-
-"Я Олег"
