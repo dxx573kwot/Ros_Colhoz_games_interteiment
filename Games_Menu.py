@@ -570,7 +570,16 @@ if __name__ == '__main__':
     audio_data_secret2 = 'Musik/I.wav'
     audio_data_my_level = 'Musik/castom_musik/file.wav'
     audio_data_The_Jounrey_Home = 'Musik/Sacrifice.wav'
-    if os.cpu_count() <= 4:
+    if I:
+        q1 = Queue()
+        p = Musik_render(q1, audio_data_secret2, -1)
+        p.start()
+        a1 = q1.get()
+        render_audio_secret2 = a1[0]
+        rady1 = a1[1]
+        rady2 = a1[1]
+        rady3 = a1[1]
+    elif os.cpu_count() <= 4:
         q1 = Queue()
         q2 = Queue()
         q3 = Queue()
