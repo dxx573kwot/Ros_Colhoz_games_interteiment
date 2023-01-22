@@ -1,12 +1,15 @@
+import sys
 import time
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue, Pipe
+from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication
 import random
 import matplotlib
 import pyautogui
 import keyboard
 import os
+import shutil
 
 from Hotbar import Hotbar
 from Map import Board
@@ -15,6 +18,12 @@ from Boss import Boss
 from Fracture import Fracture
 from Uncommon_boss import UncommonBoss
 from loadimage import load_image
+
+
+class GetAudio(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.fname = QFileDialog.getOpenFileName(self, 'Выбрать музыку', '', 'Музыка (*.wav)')[0]
 
 
 class Musik_render(Process):
@@ -28,6 +37,7 @@ class Musik_render(Process):
         print("Рендер " + self.audio_data + " начат")
         bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
+        print("ААААААА", sr)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
         if bits_in_minute != -1:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
@@ -590,7 +600,7 @@ if __name__ == '__main__':
     # audio_data_Sacrifice = 'Musik/test.wav'
     audio_data_secret1 = 'Musik/Riverside.wav'
     audio_data_secret2 = 'Musik/I.wav'
-    audio_data_my_level = 'Musik/file.wav'
+    audio_data_my_level = 'Musik/custom_music.wav'
     audio_data_Sacrifice = 'Musik/Sacrifice.wav'
     rady1, rady2, rady3 = True, True, True
     '''
@@ -1242,7 +1252,7 @@ if __name__ == '__main__':
                     music_play_now = audio_data_secret2
                     music_render_now = all_render_music["I"]
                 if secret_cod == "715":
-                    settings_boss = ("oleg.png", 10, 5, 7)
+                    settings_boss = ("oleg.png", 10, 5, 8)
                     texture_pack = "special_pack_1"
                     music_play_now = audio_data_secret1
                     music_render_now = all_render_music["Riverside"]
@@ -1252,11 +1262,24 @@ if __name__ == '__main__':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         fgh = get_main(event.pos)
                         if get_privat_musik(event.pos):
-                            settings_boss = ("custom_music.png", 2, 2, 8)
+                            if not ("custom_music" in all_render_music.keys()):
+                                app = QApplication(sys.argv)
+                                ex = GetAudio()
+                                fname = ex.fname
+                                ex.close()
+                                shutil.copy(fname, 'Musik/custom_music.wav')
+
+                                rady1 = False
+                                q1 = Queue()
+                                p1 = Musik_render(q1, audio_data_my_level, -1)
+                                p1.start()
+                                all_render_music["custom_music"], rady1 = q1.get()[0], True
+
+                            settings_boss = ("custom_music.png", 2, 2, 4)
                             texture_pack = "classic_pack"
+                            music_play_now = audio_data_my_level
+                            music_render_now = all_render_music["custom_music"]
                             # Кирилл, при нажатии свой трек всё идёт сюда
-                        elif get_tabl_lider(event.pos):
-                            continue
                         elif fgh == "лёгкий":
                             settings_boss = ("boss1.png", 4, 2, 3)
                             texture_pack = "classic_pack"
@@ -1275,18 +1298,6 @@ if __name__ == '__main__':
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
-                        print(event.pos)
-                    if settings_boss:
-                        if settings_boss[0] == "special":
-                            boss = UncommonBoss(5, all_sprites, boss_group)
-                        else:
-                            boss = Boss(*settings_boss, all_sprites, boss_group)
-                        player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
-                        board = Board(texture_pack, 25, 14, CELL_SIZE, all_sprites, map)
-                        hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
-                        fr = Fracture(board, fractures)
-                        main = False
-                        game = True
                     if event.type == pygame.KEYDOWN:
                         try:
                             if numpad[event.key] != 0:
@@ -1297,8 +1308,19 @@ if __name__ == '__main__':
                         if len(secret_cod) > 3:
                             secret_cod = ""
                         secret_cod += numpad[event.key]
+                if settings_boss:
+                    if settings_boss[0] == "special":
+                        boss = UncommonBoss(5, all_sprites, boss_group)
+                    else:
+                        boss = Boss(*settings_boss, all_sprites, boss_group)
+                    player = Player(3, 3, CELL_SIZE, (map, boss), all_sprites, player_group)
+                    board = Board(texture_pack, 25, 14, CELL_SIZE, all_sprites, map)
+                    hotbar = Hotbar((hotbar_elements,), (all_sprites, hotbars), all_sprites, hotbars)
+                    fr = Fracture(board, fractures)
+                    main = False
+                    game = True
+                # Очень смешной случай с условием, если кто-то на презентации увидит этот комментарий, то расскажу его.
             pygame.display.flip()
-
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
             if win:
