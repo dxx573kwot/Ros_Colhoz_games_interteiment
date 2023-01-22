@@ -427,9 +427,12 @@ def screenshot(file):
     pyautogui.screenshot(file)
 
 
-def take_name(keybrd, tap):
+def take_name(keybrd, tap, fullscreen):
     SIZE = WIDTH, HEIGHT = 1250, 800
-    screen = pygame.display.set_mode(SIZE)
+    if fullscreen:
+        screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
+    else:
+        screen = pygame.display.set_mode(SIZE)
     run = True
     a = ""
     while run:
@@ -645,12 +648,12 @@ if __name__ == '__main__':
               54: '6', 55: '7', 56: '8', 57: '9', 48: "0", 8: "dell", 13: "continue"}
     numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
     secret_cod = ""
+    fullscreen = fullscren_dialog()
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
-    player_name = take_name(keybrd, tap)
+    player_name = take_name(keybrd, tap, fullscreen)
     print("Привет " + player_name)
 
-    fullscreen = fullscren_dialog()
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
     CELL_SIZE = 50
