@@ -491,6 +491,12 @@ def get_add_result(pos):
     return False
 
 
+def get_tabl_lider(pos):
+    if 277 > pos[0] > 93 and 719 > pos[1] > 695:
+        return True
+    return False
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -1220,6 +1226,11 @@ if __name__ == '__main__':
                 text_x = 1100
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
+                font = pygame.font.Font(None, 30)
+                text = font.render("таблица лидеров", True, (255, 255, 255))
+                text_x = 100
+                text_y = 700
+                screen.blit(text, (text_x, text_y))
                 sun_surf = pygame.image.load('Textur/load.png')
                 sun_rect = sun_surf.get_rect()
                 screen.blit(sun_surf, sun_rect)
@@ -1244,6 +1255,8 @@ if __name__ == '__main__':
                             settings_boss = ("custom_music.png", 2, 2, 8)
                             texture_pack = "classic_pack"
                             # Кирилл, при нажатии свой трек всё идёт сюда
+                        elif get_tabl_lider(event.pos):
+                            continue
                         elif fgh == "лёгкий":
                             settings_boss = ("boss1.png", 4, 2, 3)
                             texture_pack = "classic_pack"
@@ -1262,6 +1275,7 @@ if __name__ == '__main__':
                         elif fgh == "ERROR":
                             sniper(event.pos)
                             print("снайперская рота ждёт тебя")
+                        print(event.pos)
                     if settings_boss:
                         if settings_boss[0] == "special":
                             boss = UncommonBoss(5, all_sprites, boss_group)
