@@ -545,7 +545,7 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
-    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)"]  # любой текст окончания игры
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!"]
     text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
@@ -599,50 +599,41 @@ if __name__ == '__main__':
         rady2 = a2[1]
         rady3 = a3[1]
         q1 = Queue()
-        q2 = Queue()
         q3 = Queue()
         p = Musik_render(q1, audio_data_secret1, -1)
-        p2 = Musik_render(q2, audio_data_secret2, -1)
         p3 = Musik_render(q3, audio_data_my_level, -1)
         p.start()
         p2.start()
         p3.start()
         a1 = q1.get()
-        a2 = q2.get()
         a3 = q3.get()
         render_audio_secret1 = a1[0]
-        render_audio_secret2 = a2[0]
         render_audio_my_level = a3[0]
     else:
         q1 = Queue()
         q2 = Queue()
         q3 = Queue()
         q4 = Queue()
-        q5 = Queue()
         q6 = Queue()
         p = Musik_render(q1, audio_data_Sacrifice, 60)
         p2 = Musik_render(q2, audio_data_Forever_Mine, 90)
         p3 = Musik_render(q3, audio_data_The_Jounrey_Home, 120)
         p4 = Musik_render(q4, audio_data_secret1, -1)
-        p5 = Musik_render(q5, audio_data_secret2, -1)
         p6 = Musik_render(q6, audio_data_my_level, -1)
         p.start()
         p2.start()
         p3.start()
         p4.start()
-        p5.start()
         p6.start()
         a1 = q1.get()
         a2 = q2.get()
         a3 = q3.get()
         a4 = q4.get()
-        a5 = q5.get()
         a6 = q6.get()
         render_audio_Sacrifice = a1[0]
         render_audio_The_Forever_Mine = a2[0]
         render_audio_The_Jounrey_Home = a3[0]
         render_audio_secret1 = a4[0]
-        render_audio_secret2 = a5[0]
         render_audio_my_level = a6[0]
         rady1 = a1[1]
         rady2 = a2[1]
