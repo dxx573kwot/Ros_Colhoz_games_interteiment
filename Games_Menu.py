@@ -545,8 +545,8 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
-    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715"]  # любой текст окончания игры
-    restart_text = ["пострадать ещё раз!", "хочу ещё!"]
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715", "alt+f4"]  # любой текст окончания игры
+    restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
     text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
