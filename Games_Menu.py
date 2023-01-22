@@ -480,9 +480,15 @@ def who_boss_the_gym():
 
 def all_sprites_kill():
     for group in (
-    player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
+            player_group, boss_group, all_sprites, map, bullets, hotbars, hotbar_elements, fractures, redness, rockets):
         for sprite in group.sprites():
             sprite.kill()
+
+
+def get_add_result(pos):
+    if 1196 > pos[0] > 847 and 760 > pos[1] > 728:
+        return True
+    return False
 
 
 if __name__ == '__main__':
@@ -548,7 +554,8 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
-    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715", "alt+f4"]  # любой текст окончания игры
+    text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715",
+               "alt+f4"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
     text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
@@ -1577,6 +1584,11 @@ if __name__ == '__main__':
                     text_x = 50
                     text_y = 730
                     screen.blit(text, (text_x, text_y))
+                    font = pygame.font.Font(None, 50)
+                    text = font.render("добавить результат", True, (0, 255, 0))
+                    text_x = 850
+                    text_y = 730
+                    screen.blit(text, (text_x, text_y))
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
                             run = False
@@ -1586,6 +1598,8 @@ if __name__ == '__main__':
                                 continue
                             if get_final(event.pos):
                                 final2 = True
+                            if get_add_result(event.pos):
+                                pass
                     pygame.display.flip()
                     continue
             if first:
