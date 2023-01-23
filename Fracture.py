@@ -52,7 +52,7 @@ if __name__ == "__main__":
     screenshot("Textur/cv/screenshot.png")
     screen = pygame.display.set_mode(SIZE)
     im = pygame.transform.scale(load_image("cv/screenshot.png"), (WIDTH, HEIGHT))
-    board = Board(25, 16, CELL_SIZE, all_sprites, map)
+    board = Board("classic_pack", 25, 14, CELL_SIZE, all_sprites, map)
     fr = Fracture(board, all_sprites)
     clock = pygame.time.Clock()
     running = True

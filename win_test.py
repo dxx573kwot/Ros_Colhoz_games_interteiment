@@ -1,5 +1,5 @@
 import pygame
-a = "qwertyuiopasdfghjklzxcvbnm1234567890"
+a = "1234567890"
 b = 0
 c = {
 
@@ -13,4 +13,8 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.KEYDOWN:
-            print(event.key)
+            try:
+                c[event.key] = a[b]
+                b += 1
+            except IndexError:
+                print(c)
