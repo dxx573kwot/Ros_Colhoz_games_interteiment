@@ -3,6 +3,8 @@ import time
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue, Pipe
+import threading
+import queue
 from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication
 import random
 import matplotlib
@@ -10,7 +12,7 @@ import pyautogui
 import keyboard
 import os
 import shutil
-import sqlite3
+
 from Hotbar import Hotbar
 from Map import Board
 from Player import Player
@@ -507,60 +509,26 @@ def get_tabl_lider(pos):
     return False
 
 
-def registrate_user(plare_name):
-    con = sqlite3.connect("base_score")
-    cur = con.cursor()
-    result = cur.execute(f"""SELECT Name_user FROM score""").fetchall()
-    if plare_name not in result:
-        cur.execute(f"""INSERT INTO
-        level_score (Name_user, level_1, level_2, level_3, Secret_level_1, Secret_level_2, Secret_level_3)
-        VALUES({plare_name}, 0, 0, 0, 0, 0, 0)""")
-        cur.execute(f"""INSERT INTO
-        score (Name_user, Score) VALUES ({plare_name}, 0)""")
-        con.commit()
+def renred_musik(qe):
+    bits_in_minute = -1
+    y, sr = librosa.load('Musik/custom_music.wav')
+    print("ААААААА", sr)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    if bits_in_minute != -1:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                     trim=True)
     else:
-        return none
-
-
-def score(plare_name, example, a):
-    score = 10*a + 1000 + 30 * playre.get_hp()
-    con = sqlite3.connect("base_score")
-    cur = con.cursor()
-    if example == 1:
-        result = cur.execute(f"""SELECT level_1 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(level_1) VALUES ({score}) WHERE Name_user = {plare_name}""")
-    elif example == 2:
-        result = cur.execute(f"""SELECT level_2 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(level_2) VALUES ({score}) WHERE Name_user = {plare_name}""")
-    elif example == 3:
-        result = cur.execute(f"""SELECT level_3 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(level_3) VALUES ({score}) WHERE Name_user = {plare_name}""")
-    elif example == 4:
-        score *= 2
-        result = cur.execute(f"""SELECT Secret_level_1 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(Secret_level_1) VALUES ({score}) WHERE Name_user = {plare_name}""")
-    elif example == 5:
-        score *= 2
-        result = cur.execute(f"""SELECT Secret_level_2 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(Secret_level_2) VALUES ({score}) WHERE Name_user = {plare_name}""")
-
-    elif example == 6:
-        score *= 2
-        result = cur.execute(f"""SELECT Secret_level_3 FROM level_score WHERE Name_user = {player_name}""").fetchall()
-        if score > result[0]:
-            cur.execute(f"""INSERT INTO level_score(Secret_level_3) VALUES ({score}) WHERE Name_user = {plare_name}""")
-    con.commit()
-
-    result = cur.execute(f"""SELECT level_1, level_2, level_3, Secret_level_1, Secret_level_2, Secret_level_3
-        FROM level_score WHERE Name_user = {plare_name}""").fetchall()
-    summa_score = sum(result)
-    cur.execute(f"""INSERT INTO score(Score) VALUES({summa_score} WHERE Name_user = {plare_name}""")
-    con.commit()
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
+    '''
+    bits_in_minute = -1
+    y, sr = librosa.load('Musik/custom_music.wav')
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    if bits_in_minute != -1:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                     trim=True)
+    else:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)'''
+    qe.put_nowait([beat_frames])
 
 
 if __name__ == '__main__':
@@ -744,7 +712,6 @@ if __name__ == '__main__':
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
     player_name = take_name(keybrd, tap, fullscreen)
-    registrate_user(plare_name)
     print("Привет " + player_name)
 
     pygame.init()
@@ -1325,13 +1292,21 @@ if __name__ == '__main__':
                                 fname = ex.fname
                                 ex.close()
                                 shutil.copy(fname, 'Musik/custom_music.wav')
-
                                 rady1 = False
-                                q1 = Queue()
-                                p1 = Musik_render(q1, audio_data_my_level, -1)
-                                p1.start()
-                                all_render_music["custom_music"], rady1 = q1.get()[0], True
-
+                                qe = queue.Queue()
+                                p = threading.Thread(target=renred_musik, args=[qe])
+                                p.start()
+                                while p.is_alive():
+                                    for event in pygame.event.get():
+                                        if event.type == pygame.QUIT:
+                                            run = False
+                                    loading(screen, roteit)
+                                    roteit += 1
+                                    pygame.display.flip()
+                                a = qe.get()[0]
+                                print(a)
+                                all_render_music["custom_music"] = a
+                                print(1)
                             settings_boss = ("custom_music.png", 2, 2, 4)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_my_level
@@ -1342,6 +1317,7 @@ if __name__ == '__main__':
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
                             music_render_now = all_render_music["Sacrifice"]
+                            print(all_render_music["Sacrifice"])
                         elif fgh == "средний":
                             settings_boss = ("boss2.png", 5, 2, 7)
                             texture_pack = "classic_pack"
