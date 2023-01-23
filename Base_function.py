@@ -1,4 +1,4 @@
-def registrate_user():
+def registrate_user(plare_name):
     pass
 
 

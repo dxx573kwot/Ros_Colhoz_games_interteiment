@@ -10,7 +10,7 @@ import pyautogui
 import keyboard
 import os
 import shutil
-
+import sqlite3
 from Hotbar import Hotbar
 from Map import Board
 from Player import Player
@@ -507,6 +507,62 @@ def get_tabl_lider(pos):
     return False
 
 
+def registrate_user(plare_name):
+    con = sqlite3.connect("base_score")
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT Name_user FROM score""").fetchall()
+    if plare_name not in result:
+        cur.execute(f"""INSERT INTO
+        level_score (Name_user, level_1, level_2, level_3, Secret_level_1, Secret_level_2, Secret_level_3)
+        VALUES({plare_name}, 0, 0, 0, 0, 0, 0)""")
+        cur.execute(f"""INSERT INTO
+        score (Name_user, Score) VALUES ({plare_name}, 0)""")
+        con.commit()
+    else:
+        return none
+
+
+def score(plare_name, example, a):
+    score = 10*a + 1000 + 30 * playre.get_hp()
+    con = sqlite3.connect("base_score")
+    cur = con.cursor()
+    if example == 1:
+        result = cur.execute(f"""SELECT level_1 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(level_1) VALUES ({score}) WHERE Name_user = {plare_name}""")
+    elif example == 2:
+        result = cur.execute(f"""SELECT level_2 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(level_2) VALUES ({score}) WHERE Name_user = {plare_name}""")
+    elif example == 3:
+        result = cur.execute(f"""SELECT level_3 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(level_3) VALUES ({score}) WHERE Name_user = {plare_name}""")
+    elif example == 4:
+        score *= 2
+        result = cur.execute(f"""SELECT Secret_level_1 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(Secret_level_1) VALUES ({score}) WHERE Name_user = {plare_name}""")
+    elif example == 5:
+        score *= 2
+        result = cur.execute(f"""SELECT Secret_level_2 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(Secret_level_2) VALUES ({score}) WHERE Name_user = {plare_name}""")
+
+    elif example == 6:
+        score *= 2
+        result = cur.execute(f"""SELECT Secret_level_3 FROM level_score WHERE Name_user = {player_name}""").fetchall()
+        if score > result[0]:
+            cur.execute(f"""INSERT INTO level_score(Secret_level_3) VALUES ({score}) WHERE Name_user = {plare_name}""")
+    con.commit()
+
+    result = cur.execute(f"""SELECT level_1, level_2, level_3, Secret_level_1, Secret_level_2, Secret_level_3
+        FROM level_score WHERE Name_user = {plare_name}""").fetchall()
+    summa_score = sum(result)
+    cur.execute(f"""INSERT INTO score(Score) VALUES({summa_score} WHERE Name_user = {plare_name}""")
+    con.commit()
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -688,6 +744,7 @@ if __name__ == '__main__':
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
     player_name = take_name(keybrd, tap, fullscreen)
+    registrate_user(plare_name)
     print("Привет " + player_name)
 
     pygame.init()
