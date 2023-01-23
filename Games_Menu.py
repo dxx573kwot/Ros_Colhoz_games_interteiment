@@ -3,6 +3,8 @@ import time
 import librosa.display
 import pygame
 from multiprocessing import Process, Queue, Pipe
+import threading
+import queue
 from PyQt5.QtWidgets import QFileDialog, QWidget, QApplication
 import random
 import matplotlib
@@ -505,6 +507,28 @@ def get_tabl_lider(pos):
     if 277 > pos[0] > 93 and 719 > pos[1] > 695:
         return True
     return False
+
+
+def renred_musik(qe):
+    bits_in_minute = -1
+    y, sr = librosa.load('Musik/custom_music.wav')
+    print("ААААААА", sr)
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    if bits_in_minute != -1:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                     trim=True)
+    else:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
+    '''
+    bits_in_minute = -1
+    y, sr = librosa.load('Musik/custom_music.wav')
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    if bits_in_minute != -1:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
+                                                     trim=True)
+    else:
+        tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)'''
+    qe.put_nowait([beat_frames])
 
 
 if __name__ == '__main__':
@@ -1268,13 +1292,21 @@ if __name__ == '__main__':
                                 fname = ex.fname
                                 ex.close()
                                 shutil.copy(fname, 'Musik/custom_music.wav')
-
                                 rady1 = False
-                                q1 = Queue()
-                                p1 = Musik_render(q1, audio_data_my_level, -1)
-                                p1.start()
-                                all_render_music["custom_music"], rady1 = q1.get()[0], True
-
+                                qe = queue.Queue()
+                                p = threading.Thread(target=renred_musik, args=[qe])
+                                p.start()
+                                while p.is_alive():
+                                    for event in pygame.event.get():
+                                        if event.type == pygame.QUIT:
+                                            run = False
+                                    loading(screen, roteit)
+                                    roteit += 1
+                                    pygame.display.flip()
+                                a = qe.get()[0]
+                                print(a)
+                                all_render_music["custom_music"] = a
+                                print(1)
                             settings_boss = ("custom_music.png", 2, 2, 4)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_my_level
@@ -1285,6 +1317,7 @@ if __name__ == '__main__':
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
                             music_render_now = all_render_music["Sacrifice"]
+                            print(all_render_music["Sacrifice"])
                         elif fgh == "средний":
                             settings_boss = ("boss2.png", 5, 2, 7)
                             texture_pack = "classic_pack"
