@@ -12,7 +12,7 @@ import pyautogui
 import keyboard
 import os
 import shutil
-
+import sqlite3
 from Hotbar import Hotbar
 from Map import Board
 from Player import Player
@@ -531,6 +531,50 @@ def renred_musik(qe):
     qe.put_nowait([beat_frames])
 
 
+def registrate_user(player_name):
+    con = sqlite3.connect("base_score.db")
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT name_user FROM score WHERE name_user = '{player_name}'""").fetchall()
+    if player_name not in result:
+        cur.execute(
+            f"""INSERT INTO level_score(name_user, level_1, level_2, level_3) VALUES ('{player_name}', 0, 0, 0)""")
+        cur.execute(f"""INSERT INTO score(name_user, score) VALUES ('{player_name}', 0)""")
+        con.commit()
+
+
+def gift_score(player_name, mush):
+    con = sqlite3.connect("base_score.db")
+    cur = con.cursor()
+    score = 10 * player.get_hp() + a * 200
+    if mush == 3:
+        star_score = cur.execute(f"""SELECT level_1 FROM level_score WHERE name_user = '{player_name}'""").fetchall()
+        print(star_score, score)
+        if int(star_score[0][0]) < score:
+            cur.execute(f"""UPDATE level_score SET level_1 = {score} WHERE name_user = '{player_name}'""")
+            con.commit()
+    elif mush == 7:
+        score *= 1.5
+        star_score = cur.execute(f"""SELECT level_2 FROM level_score WHERE name_user = '{player_name}'""").fetchall()
+        if int(star_score[0][0]) < score:
+            cur.execute(f"""UPDATE level_score SET level_2 = {score} WHERE name_user = '{player_name}'""")
+            con.commit()
+    elif mush == 10:
+        score *= 3
+        star_score = cur.execute(f"""SELECT level_3 FROM level_score WHERE name_user = '{player_name}'""").fetchall()
+        if int(star_score[0][0]) < score:
+            cur.execute(f"""UPDATE level_score SET level_3 = {score} WHERE name_user = '{player_name}'""")
+            con.commit()
+
+    score = cur.execute(f"""SELECT level_1, level_2, level_3 FROM level_score WHERE
+        name_user = '{player_name}'""").fetchall()
+    oll_score = 0
+    for i in score:
+        oll_score += i[0]
+
+    cur.execute(f"""UPDATE score SET score = {oll_score} WHERE name_user = '{player_name}'""")
+    con.commit()
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -594,6 +638,7 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
+    tabl_lider = False
     text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715",
                "alt+f4"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
@@ -711,7 +756,9 @@ if __name__ == '__main__':
     fullscreen = fullscren_dialog()
     print(rady1, rady2, rady3)
     print("время запуска составило " + str(time.process_time()))
+
     player_name = take_name(keybrd, tap, fullscreen)
+    registrate_user(player_name)
     print("Привет " + player_name)
 
     pygame.init()
@@ -1261,7 +1308,7 @@ if __name__ == '__main__':
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
                 font = pygame.font.Font(None, 30)
-                text = font.render("таблица лидеров", True, (255, 255, 255))
+                # text = font.render("таблица лидеров", True, (255, 255, 255))
                 text_x = 100
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
@@ -1292,7 +1339,6 @@ if __name__ == '__main__':
                                 fname = ex.fname
                                 ex.close()
                                 shutil.copy(fname, 'Musik/custom_music.wav')
-                                rady1 = False
                                 qe = queue.Queue()
                                 p = threading.Thread(target=renred_musik, args=[qe])
                                 p.start()
@@ -1303,27 +1349,47 @@ if __name__ == '__main__':
                                     loading(screen, roteit)
                                     roteit += 1
                                     pygame.display.flip()
-                                a = qe.get()[0]
-                                print(a)
-                                all_render_music["custom_music"] = a
+                                vfgnxnxgfjx = qe.get()[0]
+                                all_render_music["custom_music"] = vfgnxnxgfjx
                                 print(1)
+                                print(win)
                             settings_boss = ("custom_music.png", 2, 2, 4)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_my_level
                             music_render_now = all_render_music["custom_music"]
                             # Кирилл, при нажатии свой трек всё идёт сюда
+                        elif get_tabl_lider(event.pos):
+                            font = pygame.font.Font(None, 30)
+                            con = sqlite3.connect('base_score.db')
+                            cur = con.cursor()
+                            lider = cur.execute("""SELECT score FROM score""").fetchall()
+                            score = []
+                            for i in lider:
+                                score.append(i[1])
+                            max_score = max(score)
+                            index = score.index(max_score)
+
+                            text = font.render(f"{lider[index][0]} - {lider[index][1]}", True, (255, 255, 255))
+                            text_x = 640
+                            text_y = 700
+                            screen.blit(text, (text_x, text_y))
+                            pygame.display.flip()
+                            continue
                         elif fgh == "лёгкий":
+                            diffff = 3
                             settings_boss = ("boss1.png", 4, 2, 3)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
                             music_render_now = all_render_music["Sacrifice"]
                             print(all_render_music["Sacrifice"])
                         elif fgh == "средний":
+                            diffff = 7
                             settings_boss = ("boss2.png", 5, 2, 7)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_Forever_Mine
                             music_render_now = all_render_music["Forever_Mine"]
                         elif fgh == "тяжёлый":
+                            diffff = 10
                             settings_boss = ("boss3.png", 4, 3, 10)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_Sacrifice
@@ -1357,6 +1423,7 @@ if __name__ == '__main__':
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
             if win:
+                gift_score(player_name, diffff)
                 if (complite_light and complite_medium and complite_hard) or final2:
                     while run2:
                         for event in pygame.event.get():
@@ -1788,6 +1855,7 @@ if __name__ == '__main__':
             redness.draw(screen)
 
             if player.get_hp() < 1:
+                gift_score(player_name, diffff)
                 text_over = random.choice(text123)
                 text_restart = random.choice(restart_text)
                 life = False
