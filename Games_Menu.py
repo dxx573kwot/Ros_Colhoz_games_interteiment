@@ -535,10 +535,14 @@ def registrate_user(player_name):
     con = sqlite3.connect("base_score.db")
     cur = con.cursor()
     result = cur.execute(f"""SELECT name_user FROM score WHERE name_user = '{player_name}'""").fetchall()
-    if player_name not in result:
+    flag = True
+    for i in result:
+        if player_name in i:
+            flag = False
+    if flag:
         cur.execute(
-            f"""INSERT INTO level_score(name_user, level_1, level_2, level_3) VALUES ('{player_name}', 0, 0, 0)""")
-        cur.execute(f"""INSERT INTO score(name_user, score) VALUES ('{player_name}', 0)""")
+            f"""INSERT INTO level_score(name_user, level_1, level_2, level_3) VALUES ('{player_name}', 1, 1, 1)""")
+        cur.execute(f"""INSERT INTO score(name_user, score) VALUES ('{player_name}', 3)""")
         con.commit()
 
 
@@ -569,7 +573,7 @@ def gift_score(player_name, mush):
         name_user = '{player_name}'""").fetchall()
     oll_score = 0
     for i in score:
-        oll_score += i[0]
+        oll_score += sum(i)
 
     cur.execute(f"""UPDATE score SET score = {oll_score} WHERE name_user = '{player_name}'""")
     con.commit()
