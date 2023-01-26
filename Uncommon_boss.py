@@ -1,7 +1,7 @@
 import os
 import random
 import pygame
-import cv2
+#import cv2
 
 from Map import Board
 from Bullet import Bullet, directions
@@ -24,9 +24,9 @@ class UncommonBoss(pygame.sprite.Sprite):
         self.difficult = difficult
 
         self.frame = 0
-        self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        #self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         result, image = self.cam.read()
-        cv2.imwrite("Textur/stupid_a_piece_of_picture.png", image)
+        #cv2.imwrite("Textur/stupid_a_piece_of_picture.png", image)
         self.image = pygame.transform.scale(load_image("stupid_a_piece_of_picture.png"), (CELL_SIZE * 3, CELL_SIZE * 3))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = WIDTH // 2 - self.rect.width // 2, HEIGHT // 2 - self.rect.height // 1.5
@@ -55,7 +55,7 @@ class UncommonBoss(pygame.sprite.Sprite):
         if self.frame > 25:
             self.frame = 0
             result, image = self.cam.read()
-            cv2.imwrite("Textur/stupid_a_piece_of_picture.png", image)
+            #cv2.imwrite("Textur/stupid_a_piece_of_picture.png", image)
             self.image = pygame.transform.scale(load_image("stupid_a_piece_of_picture.png"), (CELL_SIZE * 3, CELL_SIZE * 3))
 
 

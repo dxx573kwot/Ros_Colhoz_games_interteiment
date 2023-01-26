@@ -642,7 +642,8 @@ if __name__ == '__main__':
     complite_hard = False
     final2 = False
     status = False
-    tabl_lider = False
+    tabl_lider = True
+    tabl_lider2 = False
     text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715",
                "alt+f4"]  # любой текст окончания игры
     restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
@@ -1312,7 +1313,7 @@ if __name__ == '__main__':
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
                 font = pygame.font.Font(None, 30)
-                # text = font.render("таблица лидеров", True, (255, 255, 255))
+                text = font.render("таблица лидеров", True, (255, 255, 255))
                 text_x = 100
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
@@ -1321,12 +1322,29 @@ if __name__ == '__main__':
                 screen.blit(sun_surf, sun_rect)
                 settings_boss = False
                 fgh = False
+                if tabl_lider2:
+                    font = pygame.font.Font(None, 30)
+                    con = sqlite3.connect('base_score.db')
+                    cur = con.cursor()
+                    lider = cur.execute("""SELECT * FROM score""").fetchall()
+                    index = 0
+                    score = 0
+                    for x, i in enumerate(lider):
+                        if i[1] > score:
+                            index = x
+                            score = i[1]
+                    text = font.render(f"{lider[index][0]} - {lider[index][1]}", True, (255, 255, 255))
+                    text_x = 640
+                    text_y = 700
+                    screen.blit(text, (text_x, text_y))
                 if I:
+                    tabl_lider2 = False
                     settings_boss = ("special", 1, 1, 8)
                     texture_pack = "classic_pack"
                     music_play_now = audio_data_secret2
                     music_render_now = all_render_music["I"]
                 if secret_cod == "715":
+                    tabl_lider2 = False
                     settings_boss = ("oleg.png", 10, 5, 8)
                     texture_pack = "special_pack_1"
                     music_play_now = audio_data_secret1
@@ -1338,6 +1356,7 @@ if __name__ == '__main__':
                         fgh = get_main(event.pos)
                         if get_privat_musik(event.pos):
                             if not ("custom_music" in all_render_music.keys()):
+                                tabl_lider2 = False
                                 app = QApplication(sys.argv)
                                 ex = GetAudio()
                                 fname = ex.fname
@@ -1363,17 +1382,12 @@ if __name__ == '__main__':
                             music_render_now = all_render_music["custom_music"]
                             # Кирилл, при нажатии свой трек всё идёт сюда
                         elif get_tabl_lider(event.pos):
+                            tabl_lider2 = True
                             font = pygame.font.Font(None, 30)
                             con = sqlite3.connect('base_score.db')
                             cur = con.cursor()
-                            lider = cur.execute("""SELECT score FROM score""").fetchall()
-                            score = []
-                            for i in lider:
-                                score.append(i[1])
-                            max_score = max(score)
-                            index = score.index(max_score)
-
-                            text = font.render(f"{lider[index][0]} - {lider[index][1]}", True, (255, 255, 255))
+                            lider = cur.execute("""SELECT * FROM score""").fetchmany(1)
+                            text = font.render(f"{lider[0][0]} - {lider[0][1]}", True, (255, 255, 255))
                             text_x = 640
                             text_y = 700
                             screen.blit(text, (text_x, text_y))
@@ -1381,6 +1395,7 @@ if __name__ == '__main__':
                             continue
                         elif fgh == "лёгкий":
                             diffff = 3
+                            tabl_lider2 = False
                             settings_boss = ("boss1.png", 4, 2, 3)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
@@ -1388,12 +1403,14 @@ if __name__ == '__main__':
                             print(all_render_music["Sacrifice"])
                         elif fgh == "средний":
                             diffff = 7
+                            tabl_lider2 = False
                             settings_boss = ("boss2.png", 5, 2, 7)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_Forever_Mine
                             music_render_now = all_render_music["Forever_Mine"]
                         elif fgh == "тяжёлый":
                             diffff = 10
+                            tabl_lider2 = False
                             settings_boss = ("boss3.png", 4, 3, 10)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_Sacrifice
