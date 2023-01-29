@@ -36,17 +36,14 @@ class Musik_render(Process):
         self.audio_data = audio_data
 
     def run(self):
-        print("Рендер " + self.audio_data + " начат")
         bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
-        print("ААААААА", sr)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
         if bits_in_minute != -1:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                          trim=True)
         else:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
-        print("Рендер " + self.audio_data + " окончен")
         self.q.put([beat_frames, True])
 
 
@@ -61,7 +58,6 @@ class Musik_render2(Process):
 
     def run(self):
         self.con.send([True])
-        print("Рендер " + self.audio_data + " начат")
         bits_in_minute = self.bits_in_minute
         y, sr = librosa.load(self.audio_data)
         y_harmonic, y_percussive = librosa.effects.hpss(y)
@@ -70,9 +66,7 @@ class Musik_render2(Process):
                                                          trim=True)
         else:
             tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", trim=True)
-        print("Рендер " + self.audio_data + " окончен")
         self.work = False
-        print(self.work)
         self.q.put([beat_frames, True])
         self.con.send([False])
         self.con.close()
@@ -237,14 +231,11 @@ def loading(screen, rotaite):
 
 
 def musik_render(audio_data):
-    print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
     tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                  trim=True)
-    print("Рендер " + audio_data + " окончен")
-    print()
     return beat_frames
 
 
@@ -261,26 +252,20 @@ def musik_render_Sacrifice(audio_data, q):
 
 
 def musik_render_Forever_Mine(audio_data, q):
-    print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
     tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                  trim=True)
-    print("Рендер " + audio_data + " окончен")
-    print()
     q.put([beat_frames, True])
 
 
 def musik_render_The_Jounrey_Home(audio_data, q):
-    print("Рендер " + audio_data + " начат")
     bits_in_minute = 60.0
     y, sr = librosa.load(audio_data)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
     tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
                                                  trim=True)
-    print("Рендер " + audio_data + " окончен")
-    print()
     q.put([beat_frames, True])
 
 
@@ -512,7 +497,6 @@ def get_tabl_lider(pos):
 def renred_musik(qe):
     bits_in_minute = -1
     y, sr = librosa.load('Musik/custom_music.wav')
-    print("ААААААА", sr)
     y_harmonic, y_percussive = librosa.effects.hpss(y)
     if bits_in_minute != -1:
         tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr, units="time", start_bpm=bits_in_minute,
@@ -549,10 +533,10 @@ def registrate_user(player_name):
 def gift_score(player_name, mush):
     con = sqlite3.connect("base_score.db")
     cur = con.cursor()
-    score = 10 * player.get_hp() + a * 200
+    score = 10 * player.get_hp() + a * 50
     if mush == 3:
         star_score = cur.execute(f"""SELECT level_1 FROM level_score WHERE name_user = '{player_name}'""").fetchall()
-        print(star_score, score)
+        #print(star_score, score)
         if int(star_score[0][0]) < score:
             cur.execute(f"""UPDATE level_score SET level_1 = {score} WHERE name_user = '{player_name}'""")
             con.commit()
@@ -584,8 +568,8 @@ if __name__ == '__main__':
 
     screenshot("Textur/cv/screenshot.png")
 
-    print(matplotlib.get_data_path())
-    print(os.cpu_count())
+    #print(matplotlib.get_data_path())
+    #print(os.cpu_count())
 
     I = who_boss_the_gym()
 
@@ -666,7 +650,7 @@ if __name__ == '__main__':
     for i in os.listdir("render_music"):
         with open(f"render_music/{i}", mode="r", encoding="UTF-8") as f:
             all_render_music[i.split(".")[0]] = list(map(float, f.read().split()))
-    print(all_render_music.keys())
+    #print(all_render_music.keys())
 
     audio_data_main = 'Musik/main.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
@@ -750,7 +734,7 @@ if __name__ == '__main__':
         for i in render_audio_data_Sacrifice:
             f.wirte(str(i) + " ")
     '''
-    print(rady1)
+    #print(rady1)
     a2 = ""
     keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
               97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
@@ -759,12 +743,12 @@ if __name__ == '__main__':
     numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
     secret_cod = ""
     fullscreen = fullscren_dialog()
-    print(rady1, rady2, rady3)
-    print("время запуска составило " + str(time.process_time()))
+    #print(rady1, rady2, rady3)
+    #print("время запуска составило " + str(time.process_time()))
 
     player_name = take_name(keybrd, tap, fullscreen)
     registrate_user(player_name)
-    print("Привет " + player_name)
+    #print("Привет " + player_name)
 
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
@@ -989,17 +973,17 @@ if __name__ == '__main__':
                         text_y = 580
                         screen.blit(text, (text_x, text_y))
                         font = pygame.font.Font(None, 30)
-                        if b >= len("Почему какай то шарик укланяется от пуль?"):
+                        if b >= len("Почему какай то шарик уклоняется от пуль?"):
                             part1 = False
                             part2 = True
                             time.sleep(2)
                             continue
-                        a2 += "Почему какай-то шарик укланяется от пуль?"[b]
+                        a2 += "Почему какай-то шарик уклоняется от пуль?"[b]
                         text = font.render(a2, True, (255, 255, 255))
                         text_x = 60
                         text_y = 625
                         screen.blit(text, (text_x, text_y))
-                        if "Почему какай-то шарик укланяется от пуль?"[b] != " ":
+                        if "Почему какай-то шарик уклоняется от пуль?"[b] != " ":
                             pygame.mixer.music.load(random.choice(tap))
                         else:
                             pygame.mixer.music.load(random.choice(space))
@@ -1313,7 +1297,7 @@ if __name__ == '__main__':
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
                 font = pygame.font.Font(None, 30)
-                text = font.render("таблица лидеров", True, (255, 255, 255))
+                text = font.render("лидер", True, (255, 255, 255))
                 text_x = 100
                 text_y = 700
                 screen.blit(text, (text_x, text_y))
@@ -1333,7 +1317,7 @@ if __name__ == '__main__':
                         if i[1] > score:
                             index = x
                             score = i[1]
-                    text = font.render(f"{lider[index][0]} - {lider[index][1]}", True, (255, 255, 255))
+                    text = font.render(f"Лидер по очкам: {lider[index][0]} - {lider[index][1]}", True, (255, 255, 255))
                     text_x = 640
                     text_y = 700
                     screen.blit(text, (text_x, text_y))
@@ -1374,8 +1358,6 @@ if __name__ == '__main__':
                                     pygame.display.flip()
                                 vfgnxnxgfjx = qe.get()[0]
                                 all_render_music["custom_music"] = vfgnxnxgfjx
-                                print(1)
-                                print(win)
                             settings_boss = ("custom_music.png", 2, 2, 4)
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_my_level
@@ -1400,7 +1382,6 @@ if __name__ == '__main__':
                             texture_pack = "classic_pack"
                             music_play_now = audio_data_The_Jounrey_Home
                             music_render_now = all_render_music["Sacrifice"]
-                            print(all_render_music["Sacrifice"])
                         elif fgh == "средний":
                             diffff = 7
                             tabl_lider2 = False
@@ -1417,7 +1398,7 @@ if __name__ == '__main__':
                             music_render_now = all_render_music["The_Jounrey_Home"]
                         elif fgh == "ERROR":
                             sniper(event.pos)
-                            print("снайперская рота ждёт тебя")
+                            #print("снайперская рота ждёт тебя")
                     if event.type == pygame.KEYDOWN:
                         try:
                             if numpad[event.key] != 0:
@@ -1439,7 +1420,6 @@ if __name__ == '__main__':
                     fr = Fracture(board, fractures)
                     main = False
                     game = True
-                # Очень смешной случай с условием, если кто-то на презентации увидит этот комментарий, то расскажу его.
             pygame.display.flip()
         elif game:  # НАЧАЛО ИГРЫ
             events = pygame.event.get()
@@ -1822,7 +1802,7 @@ if __name__ == '__main__':
             except IndexError:
                 win = True
                 continue
-            if toc > 3.35 and is_music_start:  # Музыка начинается после 3.31 секунды
+            if toc > 3.35 and is_music_start:  # Музыка начинается после 3.35 секунды
                 # (время прохождения элементом хотбара)
                 pygame.mixer.music.load(music_play_now)
                 time.sleep(0.1)
