@@ -536,7 +536,7 @@ def gift_score(player_name, mush):
     score = 10 * player.get_hp() + a * 50
     if mush == 3:
         star_score = cur.execute(f"""SELECT level_1 FROM level_score WHERE name_user = '{player_name}'""").fetchall()
-        #print(star_score, score)
+        # print(star_score, score)
         if int(star_score[0][0]) < score:
             cur.execute(f"""UPDATE level_score SET level_1 = {score} WHERE name_user = '{player_name}'""")
             con.commit()
@@ -568,8 +568,8 @@ if __name__ == '__main__':
 
     screenshot("Textur/cv/screenshot.png")
 
-    #print(matplotlib.get_data_path())
-    #print(os.cpu_count())
+    # print(matplotlib.get_data_path())
+    # print(os.cpu_count())
 
     I = who_boss_the_gym()
 
@@ -650,7 +650,7 @@ if __name__ == '__main__':
     for i in os.listdir("render_music"):
         with open(f"render_music/{i}", mode="r", encoding="UTF-8") as f:
             all_render_music[i.split(".")[0]] = list(map(float, f.read().split()))
-    #print(all_render_music.keys())
+    # print(all_render_music.keys())
 
     audio_data_main = 'Musik/main.wav'
     audio_data_The_Jounrey_Home = 'Musik/The_Jounrey_Home.wav'  # Musik/test.wav Musik/The_Jounrey_Home.wav Musik/Sacrifice.wav
@@ -734,7 +734,7 @@ if __name__ == '__main__':
         for i in render_audio_data_Sacrifice:
             f.wirte(str(i) + " ")
     '''
-    #print(rady1)
+    # print(rady1)
     a2 = ""
     keybrd = {113: 'q', 119: 'w', 101: 'e', 114: 'r', 116: 't', 121: 'y', 117: 'u', 105: 'i', 111: 'o', 112: 'p',
               97: 'a', 115: 's', 100: 'd', 102: 'f', 103: 'g', 104: 'h', 106: 'j', 107: 'k', 108: 'l', 122: 'z',
@@ -743,12 +743,12 @@ if __name__ == '__main__':
     numpad = {49: '1', 50: '2', 51: '3', 52: '4', 53: '5', 54: '6', 55: '7', 56: '8', 57: '9', 48: '0'}
     secret_cod = ""
     fullscreen = fullscren_dialog()
-    #print(rady1, rady2, rady3)
-    #print("время запуска составило " + str(time.process_time()))
+    # print(rady1, rady2, rady3)
+    # print("время запуска составило " + str(time.process_time()))
 
     player_name = take_name(keybrd, tap, fullscreen)
     registrate_user(player_name)
-    #print("Привет " + player_name)
+    # print("Привет " + player_name)
 
     pygame.init()
     SIZE = WIDTH, HEIGHT = 1250, 800
@@ -1398,7 +1398,7 @@ if __name__ == '__main__':
                             music_render_now = all_render_music["The_Jounrey_Home"]
                         elif fgh == "ERROR":
                             sniper(event.pos)
-                            #print("снайперская рота ждёт тебя")
+                            # print("снайперская рота ждёт тебя")
                     if event.type == pygame.KEYDOWN:
                         try:
                             if numpad[event.key] != 0:

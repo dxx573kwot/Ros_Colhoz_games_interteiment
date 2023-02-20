@@ -23,7 +23,8 @@ class Board(pygame.sprite.Sprite):
         # Оставил нулевые отступы на случай, если мы потом решим их добавить
         self.board = [[random.choice(texturs)
                        for _ in range(width)] for _ in range(height)]
-        self.image = pygame.transform.scale(pygame.Surface([0, 0]), (self.width * self.cell_size, self.height * self.cell_size))
+        self.image = pygame.transform.scale(pygame.Surface([0, 0]),
+                                            (self.width * self.cell_size, self.height * self.cell_size))
         self.render(self.image)
         self.rect = self.image.get_rect()
 
@@ -55,4 +56,3 @@ if __name__ == "__main__":
         all_sprites.update()
         all_sprites.draw(screen)
         pygame.display.flip()
-

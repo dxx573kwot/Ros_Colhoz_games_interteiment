@@ -2,7 +2,6 @@ import pygame
 from Map import Board
 from loadimage import load_image
 
-
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1250, 800
 CELL_SIZE = 50
@@ -33,7 +32,7 @@ class Rocket(pygame.sprite.Sprite):
     def get_shot_warning(self):
         return self.shot_warning
 
-    def update(self, *args): # *self.player.get_pos()
+    def update(self, *args):  # *self.player.get_pos()
         change_x, change_y = self.has_path(self.rect.x // CELL_SIZE, self.rect.y // CELL_SIZE, *self.player.get_pos())
         new_x, new_y = (change_x - self.rect.x // CELL_SIZE), (change_y - self.rect.y // CELL_SIZE)
         self.shot_warning -= 1

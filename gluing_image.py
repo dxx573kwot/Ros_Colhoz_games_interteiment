@@ -19,4 +19,5 @@ if __name__ == "__main__":
     size = width, height = 400 * col, 400 * row
     screen = pygame.display.set_mode(size)
     gluing_image(
-        ["b1/p1.png", "b1/p2.png", "b1/p3.png", "b1/p4.png", "b1/p5.png", "b1/p6.png", "b1/p7.png", "b1/p8.png", "b1/p9.png", "b1/p10.png"], row, col)
+        ["b1/p1.png", "b1/p2.png", "b1/p3.png", "b1/p4.png", "b1/p5.png", "b1/p6.png", "b1/p7.png", "b1/p8.png",
+         "b1/p9.png", "b1/p10.png"], row, col)

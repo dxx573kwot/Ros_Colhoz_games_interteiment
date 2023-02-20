@@ -30,7 +30,8 @@ class Fracture(pygame.sprite.Sprite):
                      (-1 * random.random(), -1 * random.random())):
             start_x, start_y = pos
             while 0 < start_x < WIDTH and 0 < start_y < HEIGHT:
-                next_x, next_y = random.randint(1, 20) * i * random.randint(0, 1), random.randint(1, 20) * j * random.randint(0, 1)
+                next_x, next_y = random.randint(1, 20) * i * random.randint(0, 1), \
+                                 random.randint(1, 20) * j * random.randint(0, 1)
                 coords.append(((start_x, start_y), (start_x + next_x, start_y + next_y)))
                 start_x, start_y = start_x + next_x, start_y + next_y
         self.lines[tuple(coords)] = color

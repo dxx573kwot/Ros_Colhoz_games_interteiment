@@ -51,7 +51,8 @@ class Player(pygame.sprite.Sprite):
         if not pygame.sprite.spritecollideany(self, self.map) or pygame.sprite.collide_mask(self, self.boss):
             self.rect = self.pos
 
-    def change_hp(self, fracture, redness_groups=[], bullets=[], rockets=[], early_or_latter_input=False, move_check=True):
+    def change_hp(self, fracture, redness_groups=[], bullets=[], rockets=[], early_or_latter_input=False,
+                  move_check=True):
         if (early_or_latter_input or self.rect == self.pos) and move_check:
             ScreenRedness(redness_groups)
             pygame.mixer.Sound("Sounds/downed_rhythm.mp3").play()
@@ -71,7 +72,7 @@ class Player(pygame.sprite.Sprite):
 
     def render(self):
         self.image = pygame.transform.scale(load_image(random.choice(["hero1.png", "hero2.png", "hero3.png"])),
-                                         (self.cell_size, self.cell_size))
+                                            (self.cell_size, self.cell_size))
         self.image.blit(pygame.font.Font(None, 20).render(f"{self.hp}",
                                                           True, (255, 0, 0)), (CELL_SIZE * 0.4, CELL_SIZE * 0.3))
 

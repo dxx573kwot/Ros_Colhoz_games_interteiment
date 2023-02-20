@@ -36,7 +36,7 @@ class Boss(pygame.sprite.Sprite):
         self.min_delay = 3  # Минимальная задержка перед вылетом пули
         self.max_delay = 5  # Максимальная задержка перед вылетом пули
         self.kast_chance = 0.25 + difficult * 0.05  # Шанс атаки
-        self.kast_rocket_chance = 0.15 + difficult * 0.05 # Шанс запуска ракеты
+        self.kast_rocket_chance = 0.15 + difficult * 0.05  # Шанс запуска ракеты
 
     def update(self, *args):
         self.fr += 1
@@ -48,13 +48,16 @@ class Boss(pygame.sprite.Sprite):
     def attack(self, bullet_group: tuple, rocket_group: tuple):
         if self.kast_chance >= random.random() or self.kast_chance >= 1:
             for _ in range(random.randint(self.min_number_bullet, self.max_number_bullet)):
-                Bullet(bullet_group[0], random.randrange(0, WIDTH // CELL_SIZE), random.randrange(0, HEIGHT // CELL_SIZE - 2),
+                Bullet(bullet_group[0], random.randrange(0, WIDTH // CELL_SIZE),
+                       random.randrange(0, HEIGHT // CELL_SIZE - 2),
                        random.randint(self.min_delay, self.max_delay), random.choice([i for i in directions.keys()]),
                        bullet_group[1], bullet_group[2])
-        if (self.kast_rocket_chance >= random.random() or self.kast_rocket_chance >= 1) and not rocket_group[1].sprites():
+        if (self.kast_rocket_chance >= random.random() or self.kast_rocket_chance >= 1) and not rocket_group[
+            1].sprites():
             for _ in range(random.randint(3, 5)):
-                Rocket(rocket_group[0], random.randrange(0, WIDTH // CELL_SIZE), random.randrange(0, HEIGHT // CELL_SIZE - 2),
-                  random.randint(5, 8), random.randint(15, 30), *rocket_group[1:])  # 15 30
+                Rocket(rocket_group[0], random.randrange(0, WIDTH // CELL_SIZE),
+                       random.randrange(0, HEIGHT // CELL_SIZE - 2),
+                       random.randint(5, 8), random.randint(15, 30), *rocket_group[1:])  # 15 30
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
