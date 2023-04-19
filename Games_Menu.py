@@ -630,7 +630,7 @@ if __name__ == '__main__':
     tabl_lider2 = False
     text123 = ["Игра отстой!", "Садись, два по киберспорту!", "Не бей пожалуйста :)", "ERROR: Oleg 715",
                "alt+f4"]  # любой текст окончания игры
-    restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "alt+ctrl+delete"]
+    restart_text = ["пострадать ещё раз!", "хочу ещё!", "не опять, а снова!", "всеравно проиграешь", "юзер, давай снова!"]
     text_over = random.choice(text123)
     text_restart = random.choice(restart_text)
     wall_texture = ["Textur/CUMmen.jpg"]
